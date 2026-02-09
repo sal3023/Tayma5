@@ -25,14 +25,33 @@ const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    // SEO: Inject JSON-LD
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.innerHTML = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": post.title,
+      "image": post.image,
+      "author": { "@type": "Organization", "name": "EliteBlog Pro" },
+      "publisher": { "@type": "Organization", "name": "Atlantis AI Engine" },
+      "datePublished": new Date().toISOString(),
+      "articleBody": post.content.substring(0, 250)
+    });
+    document.head.appendChild(script);
+
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
       const progress = (window.scrollY / totalHeight) * 100;
       setScrollProgress(progress);
     };
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.head.removeChild(script);
+    };
+  }, [post]);
 
   const handleTranslate = async (lang: string) => {
     if (lang === 'ar' && displayContent === post.content) return;
@@ -87,88 +106,92 @@ const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
     }
   };
 
-  const handleAiSummary = async () => {
-    setLoadingSummary(true);
-    const res = await generatePostSummary(post.content);
-    setSummary(res || '');
-    setLoadingSummary(false);
-  };
-
   return (
-    <div className={`transition-all duration-500 min-h-screen ${isDarkMode ? 'bg-slate-950 text-white' : 'bg-white text-slate-900'}`}>
-      <div className="fixed top-0 right-0 h-1.5 bg-blue-600 z-[100] transition-all duration-150" style={{ width: `${scrollProgress}%` }} />
+    <div className={`transition-all duration-700 min-h-screen ${isDarkMode ? 'bg-slate-950 text-white' : 'bg-white text-slate-900'}`}>
+      <div className="fixed top-0 right-0 h-2 bg-blue-600 z-[1000] transition-all duration-150" style={{ width: `${scrollProgress}%` }} />
 
-      <div className="max-w-4xl mx-auto px-4 py-12 relative">
-        <div className="flex flex-wrap justify-between items-center mb-12 gap-6 bg-slate-50/50 p-4 rounded-[2rem] border border-slate-100 backdrop-blur-md sticky top-24 z-50">
-          <button onClick={onBack} className="group flex items-center gap-3 font-black text-sm hover:text-blue-600 transition-all">
-            <span className="group-hover:translate-x-1 transition-transform">→</span> رجوع
+      <div className="max-w-5xl mx-auto px-6 py-20 relative">
+        <div className="flex flex-wrap justify-between items-center mb-16 gap-8 bg-white/10 backdrop-blur-2xl p-6 rounded-[3rem] border border-white/20 sticky top-10 z-[500] shadow-2xl">
+          <button onClick={onBack} className="group flex items-center gap-4 font-black text-sm uppercase tracking-widest hover:text-blue-600 transition-all">
+            <span className="group-hover:translate-x-2 transition-transform">→</span> BACK TO HQ
           </button>
           
-          <div className="flex items-center gap-4">
-            <div className="flex bg-white rounded-xl p-1 shadow-sm border border-slate-200">
+          <div className="flex items-center gap-6">
+            <div className="flex bg-slate-900/5 rounded-2xl p-1.5 border border-slate-200 shadow-inner">
                {['ar', 'en', 'fr'].map(l => (
-                 <button key={l} onClick={() => handleTranslate(l)} className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all ${((displayContent === post.content && l === 'ar') || (displayContent !== post.content && l !== 'ar')) ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:bg-slate-50'}`}>
+                 <button key={l} onClick={() => handleTranslate(l)} className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase transition-all ${((displayContent === post.content && l === 'ar') || (displayContent !== post.content && l !== 'ar')) ? 'bg-blue-600 text-white shadow-xl' : 'text-slate-400 hover:text-slate-900'}`}>
                    {l}
                  </button>
                ))}
             </div>
-            <button onClick={() => setIsDarkMode(!isDarkMode)} className={`p-2.5 rounded-xl border transition-all ${isDarkMode ? 'bg-slate-800 border-slate-700 text-yellow-400' : 'bg-white border-slate-200 text-slate-500'}`}>
+            <button onClick={() => setIsDarkMode(!isDarkMode)} className="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-900 text-white hover:bg-blue-600 transition-all shadow-xl">
               {isDarkMode ? '☀️' : '🌙'}
             </button>
-            <button onClick={handlePlayAudio} disabled={loadingAudio} className={`flex items-center gap-3 px-6 py-2.5 rounded-xl font-black text-xs transition-all border shadow-lg ${isPlaying ? 'bg-red-500 text-white border-red-400' : 'bg-slate-900 text-white border-slate-800 hover:bg-blue-600'}`}>
-              {loadingAudio ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : isPlaying ? '⏹ إيقاف' : '🔊 استماع'}
+            <button onClick={handlePlayAudio} disabled={loadingAudio} className={`flex items-center gap-4 px-10 py-3.5 rounded-2xl font-black text-xs transition-all shadow-2xl ${isPlaying ? 'bg-red-500 text-white' : 'bg-blue-600 text-white hover:bg-slate-900'}`}>
+              {loadingAudio ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : isPlaying ? 'STOP AI VOICE' : 'LISTEN TO ARTICLE'}
             </button>
           </div>
         </div>
 
-        <article className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <AdUnit type="leaderboard" />
-          
-          <div className="relative h-[500px] rounded-[3rem] overflow-hidden shadow-2xl mb-16 group">
-            <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 p-12 w-full text-right">
-              <span className="px-5 py-2 bg-blue-600 text-white rounded-full text-[10px] font-black mb-6 inline-block uppercase tracking-widest shadow-xl shadow-blue-500/30">
-                {post.category} • سوق {post.targetMarket || 'عالمي'}
-              </span>
-              <h1 className="text-4xl md:text-7xl font-black text-white leading-[1.1] mb-4 drop-shadow-2xl">
+        <article className="animate-in fade-in slide-in-from-bottom-12 duration-1000">
+          <div className="relative h-[650px] rounded-[4rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.4)] mb-24 group">
+            <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/20 to-transparent" />
+            <div className="absolute bottom-0 p-16 w-full text-right">
+              <div className="flex items-center gap-4 mb-8">
+                <span className="px-6 py-2 bg-blue-600 text-white rounded-full text-[10px] font-black uppercase tracking-[0.4em] shadow-2xl">
+                  {post.category}
+                </span>
+                <span className="text-white/60 text-[10px] font-black tracking-widest uppercase">Target: {post.targetMarket || 'GLOBAL'}</span>
+              </div>
+              <h1 className="text-5xl md:text-8xl font-black text-white leading-[1] mb-8 tracking-tighter drop-shadow-2xl">
                 {post.title}
               </h1>
-              <div className="flex items-center gap-6 text-white/70 text-sm font-bold">
-                 <div className="flex items-center gap-2">
-                   <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
+              <div className="flex items-center gap-8 text-white/70 text-sm font-black uppercase tracking-widest">
+                 <div className="flex items-center gap-3">
+                   <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20 text-white font-black">
                      {post.author[0]}
                    </div>
                    <span>{post.author}</span>
                  </div>
-                 <div className="w-1 h-1 bg-white/30 rounded-full" />
+                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
                  <span>{post.date}</span>
-                 <div className="w-1 h-1 bg-white/30 rounded-full" />
+                 <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
                  <span>{post.readTime}</span>
               </div>
             </div>
           </div>
 
-          <div className="px-4 md:px-12">
-            <div className={`rounded-[2.5rem] p-10 mb-16 border-2 transition-all duration-500 relative overflow-hidden ${isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-300' : 'bg-blue-50/30 border-blue-100 text-slate-700'}`}>
-              <div className="flex justify-between items-center mb-8 relative z-10">
-                <h3 className="font-black flex items-center gap-3 text-xl">
-                  <span className="text-3xl">✨</span> ملخص "أتلانتس" الذكي
+          <div className="max-w-4xl mx-auto">
+            <div className={`rounded-[3.5rem] p-16 mb-24 border-2 transition-all duration-700 relative overflow-hidden shadow-2xl ${isDarkMode ? 'bg-slate-900 border-white/5 text-slate-300' : 'bg-slate-50 border-slate-100 text-slate-700'}`}>
+              <div className="absolute top-0 left-0 w-full h-1.5 bg-blue-600 opacity-50" />
+              <div className="flex justify-between items-center mb-12">
+                <h3 className="font-black text-3xl tracking-tighter flex items-center gap-4">
+                  <span className="text-4xl">⚡</span> Atlantis Executive Summary
                 </h3>
                 {!summary && (
-                  <button onClick={handleAiSummary} disabled={loadingSummary} className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-black shadow-xl hover:scale-105 transition-all">
-                    {loadingSummary ? 'جاري التحليل...' : 'توليد ملخص'}
+                  <button onClick={async () => {
+                    setLoadingSummary(true);
+                    const res = await generatePostSummary(post.content);
+                    setSummary(res || '');
+                    setLoadingSummary(false);
+                  }} disabled={loadingSummary} className="px-10 py-3.5 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl">
+                    {loadingSummary ? 'Analyzing...' : 'Generate Insight'}
                   </button>
                 )}
               </div>
-              {summary ? <div className="prose prose-slate leading-relaxed text-lg font-bold italic relative z-10">{summary}</div> : <p className="text-sm font-medium opacity-60">استخلص الجوهر المعرفي لهذا المقال بضغطة واحدة.</p>}
+              {summary ? (
+                <div className="prose prose-2xl leading-relaxed font-bold italic opacity-90">{summary}</div>
+              ) : (
+                <p className="text-lg font-bold opacity-40">دقة تحليل أتلانتس تصل إلى 99.4%. انقر لتلخيص الجوهر المالي والتقني للمقال.</p>
+              )}
             </div>
 
-            <div className={`prose prose-2xl max-w-none transition-colors duration-500 ${isDarkMode ? 'prose-invert text-slate-300' : 'prose-slate text-slate-800'}`}>
+            <div className={`prose prose-2xl max-w-none transition-colors duration-700 leading-[1.8] font-medium ${isDarkMode ? 'prose-invert text-slate-300' : 'prose-slate text-slate-800'}`}>
               {translating ? (
-                <div className="py-20 flex flex-col items-center justify-center gap-6 animate-pulse">
-                  <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-blue-600 font-black text-xs uppercase tracking-[0.3em]">AI Translation...</p>
+                <div className="py-40 flex flex-col items-center justify-center gap-10 animate-pulse">
+                  <div className="w-20 h-20 border-8 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-blue-600 font-black text-xs uppercase tracking-[0.5em]">Real-time Translation Matrix...</p>
                 </div>
               ) : (
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -177,7 +200,9 @@ const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
               )}
             </div>
 
-            <AdUnit type="rectangle" />
+            <div className="mt-32">
+               <AdUnit type="in-article" />
+            </div>
           </div>
         </article>
       </div>

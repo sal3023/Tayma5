@@ -1,38 +1,57 @@
 
 import { GoogleGenAI, Type, Modality } from "@google/genai";
+import { Post } from "../types";
 
+// Initialize the Google GenAI client with the API key from environment variables
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 /**
- * محرك أتلانتس الاستراتيجي - توليد محتوى عالي الربحية
+ * محرك أتلانتس الاستراتيجي 2.0 - هندسة المحتوى عالي الربحية
  */
 export const generateFullArticle = async (title: string, category: string, market: string = 'Global') => {
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-3-pro-preview',
       contents: [{
         parts: [{
-          text: `بصفتك خبير سيو عالمي ومتخصص في الربح من الإعلانات (AdSense Specialist)، اكتب مقالاً مرجعياً ضخماً باللغة العربية يستهدف السوق "${market}".
-          الموضوع: "${title}" في قسم "${category}".
+          text: `بصفتك خبير استراتيجيات محتوى دولي (International Content Strategist)، قم ببناء مقال مرجعي فائق الجودة للسوق "${market}".
+          الموضوع: "${title}"
+          القسم: "${category}"
 
-          المعايير الاستراتيجية للربح والأرشفة:
-          1. الاستهداف الجغرافي: إذا كان السوق (USA/Europe)، ادمج مفاهيم وإحصائيات دولية حديثة تجذب معلنين ذوي ميزانيات ضخمة.
-          2. هندسة الكلمات: استخدم كلمات مفتاحية ذات CPC مرتفع (High Cost Per Click).
-          3. الطول والعمق: المقال يجب أن يتجاوز 1200 كلمة، مقسم لعناوين H2 و H3 احترافية.
-          4. العناصر التفاعلية: أضف جداول مقارنة، قوائم نصائح، وقسم أسئلة وأجوبة (FAQ) لتعزيز الـ Rich Snippets.
-          5. اللكنة: لغة عربية فصيحة، رصينة، وعالمية المنهج.
+          الهيكل المطلوب للربح الأقصى:
+          1. العنوان: جذاب، يثير الفضول، ويحتوي على الكلمة المفتاحية الرئيسية.
+          2. المقدمة: تستخدم أسلوب (Hook) عالمي لجذب القارئ في أول 3 ثوانٍ.
+          3. المحتوى: مقسم لـ (H2, H3) مع دمج كلمات مفتاحية LSI (Latent Semantic Indexing) لرفع الأرشفة.
+          4. التحليل المالي: إذا كان الموضوع تقنياً أو مالياً، أضف فقرة "توقعات السوق 2025".
+          5. الخاتمة: دعوة لاتخاذ إجراء (CTA) ذكية لزيادة التفاعل الإعلاني.
           
-          التنسيق: Markdown كامل.`
+          التنسيق: Markdown احترافي مع جداول بيانات إذا لزم الأمر.`
         }]
       }],
       config: {
         tools: [{ googleSearch: {} }],
+        thinkingConfig: { thinkingBudget: 2000 }
       },
     });
 
+    let content = response.text || "";
+    
+    // Extract grounding chunks and append URLs to the content as required by search grounding rules
+    const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+    if (groundingChunks && groundingChunks.length > 0) {
+      content += "\n\n### المصادر والمراجع (References)\n";
+      const seenUrls = new Set();
+      groundingChunks.forEach((chunk: any) => {
+        if (chunk.web?.uri && !seenUrls.has(chunk.web.uri)) {
+          content += `- [${chunk.web.title || chunk.web.uri}](${chunk.web.uri})\n`;
+          seenUrls.add(chunk.web.uri);
+        }
+      });
+    }
+
     return {
-      content: response.text || "",
-      grounding: response.candidates?.[0]?.groundingMetadata?.groundingChunks || []
+      content: content,
+      grounding: groundingChunks || []
     };
   } catch (error) {
     console.error("Atlantis Pro Error:", error);
@@ -41,38 +60,13 @@ export const generateFullArticle = async (title: string, category: string, marke
 };
 
 /**
- * تحليل حالة المدونة واقتراح النواقص (المساعد الذكي)
- */
-export const analyzeBlogGaps = async (posts: any[]) => {
-  const postTitles = posts.map(p => p.title).join(", ");
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: [{
-        parts: [{
-          text: `بصفتك المساعد الذكي الالي لمدونة EliteBlog، حلل هذه القائمة من المقالات الحالية: [${postTitles}].
-          أجب باللغة العربية:
-          1. ما هي المواضيع التقنية أو الربحية الناقصة حالياً لتكتمل المدونة؟
-          2. اقترح 3 أفكار مقالات "نيش" (Niche) عالية الربحية لم يتم التطرق لها.
-          3. نصيحة تقنية لتحسين الأداء أو السيو.
-          كن مختصراً ومباشراً وعملياً.`
-        }]
-      }]
-    });
-    return response.text;
-  } catch (error) {
-    return "عذراً، المحلل الذكي غير متاح حالياً.";
-  }
-};
-
-/**
- * رادار الترندات المربحة عالمياً
+ * رادار الترندات المربحة عالمياً 2.0
  */
 export const fetchGlobalTrends = async (category: string, region: string = 'Global') => {
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: [{ parts: [{ text: `حلل بيانات البحث الحالية في منطقة "${region}" لقطاع "${category}". استخرج أفضل 5 مواضيع ترند ذات عائد إعلاني مرتفع.` }] }],
+      contents: [{ parts: [{ text: `قم بإجراء مسح فوري لترندات البحث في "${region}" لقطاع "${category}". استخرج 6 مواضيع "Gold Mine" ذات CPC يتجاوز $10.` }] }],
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -92,70 +86,111 @@ export const fetchGlobalTrends = async (category: string, region: string = 'Glob
         }
       }
     });
+    // Use .text property to get the generated string
     return JSON.parse(response.text || '[]');
   } catch (error) {
     return [];
   }
 };
 
-export const generateImageForPost = async (prompt: string) => {
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
-      contents: [{
-        parts: [{
-          text: `High-end commercial photography for a global tech blog. Subject: ${prompt}. Professional lighting, 8k resolution, minimalist, corporate aesthetic, suitable for USA/Europe markets.`
-        }]
-      }],
-      config: {
-        imageConfig: { aspectRatio: "16:9" }
-      }
-    });
-    const part = response.candidates?.[0]?.content?.parts.find(p => p.inlineData);
-    return part?.inlineData ? `data:image/png;base64,${part.inlineData.data}` : null;
-  } catch (error) {
-    return null;
-  }
-};
-
+/**
+ * توليد ملخص تنفيذي ذكي للمقال
+ */
 export const generatePostSummary = async (content: string) => {
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: [{ parts: [{ text: `لخص هذا المحتوى العميق في فقرة مركزة للسيو: ${content.substring(0, 3000)}` }] }]
+      contents: [{ parts: [{ text: `قم بتلخيص المقال التالي في شكل نقاط مركزة تبرز الجوهر المالي والتقني: \n\n ${content.substring(0, 5000)}` }] }],
     });
-    return response.text;
+    return response.text || null;
   } catch (error) {
-    return "";
+    console.error("Summary Error:", error);
+    return null;
   }
 };
 
-export const suggestSEO = async (title: string, content: string) => {
+/**
+ * ترجمة المقالات للأسواق العالمية المستهدفة
+ */
+export const translateArticle = async (content: string, targetLang: string) => {
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: [{ parts: [{ text: `اقترح تحسينات سيو للمقال: ${title}` }] }],
+      contents: [{ parts: [{ text: `Translate the following article to ${targetLang}. Keep the markdown structure: \n\n ${content}` }] }],
+    });
+    return response.text || null;
+  } catch (error) {
+    console.error("Translation Error:", error);
+    return null;
+  }
+};
+
+/**
+ * مولد خطط الأعمال الاستراتيجية AI
+ */
+export const generateBusinessPlan = async (formData: { name: string, industry: string, goals: string }) => {
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-pro-preview',
+      contents: [{ parts: [{ text: `قم بإنشاء خطة عمل شاملة لـ "${formData.name}" في قطاع "${formData.industry}". الأهداف: ${formData.goals}. ركز على الأرباح والنمو العالمي.` }] }],
       config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            seoTitle: { type: Type.STRING },
-            seoDescription: { type: Type.STRING },
-            reasoning: { type: Type.STRING }
-          },
-          required: ["seoTitle", "seoDescription", "reasoning"]
-        }
+        thinkingConfig: { thinkingBudget: 4000 }
       }
     });
-    return JSON.parse(response.text || '{}');
+    return response.text || "فشل في توليد الخطة.";
+  } catch (error) {
+    console.error("Business Plan Error:", error);
+    return "فشل في الوصول للمحرك الاستراتيجي.";
+  }
+};
+
+/**
+ * تحليل فجوات المحتوى وفرص الربح (Gap Analysis)
+ */
+export const analyzeBlogGaps = async (posts: Post[]) => {
+  try {
+    const titles = posts.map(p => p.title).join(", ");
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-pro-preview',
+      contents: [{ parts: [{ text: `بناءً على العناوين الحالية (${titles})، ما هي الفجوات في المحتوى التي يمكن استغلالها لزيادة الربح (High CPC)؟` }] }],
+    });
+    return response.text || "تعذر التحليل حالياً.";
+  } catch (error) {
+    console.error("Gap Analysis Error:", error);
+    return "فشل المحرك في تحليل البيانات.";
+  }
+};
+
+/**
+ * توليد صور غلاف احترافية باستخدام نموذج الصور المتقدم
+ */
+export const generateImageForPost = async (prompt: string) => {
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-pro-image-preview',
+      contents: [{
+        parts: [{
+          text: `Professional editorial illustration for a high-end business blog. Theme: ${prompt}. Photorealistic, cinematic lighting, corporate blue and slate gray palette, 4k resolution, wide aspect ratio.`
+        }]
+      }],
+      config: {
+        imageConfig: { aspectRatio: "16:9", imageSize: "1K" }
+      }
+    });
+    // Iterate through all parts to find the image data as per guidelines
+    for (const part of response.candidates?.[0]?.content?.parts || []) {
+      if (part.inlineData) {
+        return `data:image/png;base64,${part.inlineData.data}`;
+      }
+    }
+    return null;
   } catch (error) {
     return null;
   }
 };
 
 /**
- * تحويل النص إلى كلام باستخدام نموذج Gemini TTS
+ * تحويل النص إلى كلام (Text-to-Speech)
  */
 export const textToSpeech = async (text: string) => {
   try {
@@ -163,11 +198,10 @@ export const textToSpeech = async (text: string) => {
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text: text.substring(0, 1500) }] }],
       config: {
-        // Use Modality.AUDIO from @google/genai as required by guidelines
         responseModalities: [Modality.AUDIO],
         speechConfig: {
           voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: 'Kore' },
+            prebuiltVoiceConfig: { voiceName: 'Puck' },
           },
         },
       },
@@ -175,29 +209,5 @@ export const textToSpeech = async (text: string) => {
     return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
   } catch (error) {
     return null;
-  }
-};
-
-export const translateArticle = async (content: string, targetLang: string) => {
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: [{ parts: [{ text: `Translate to ${targetLang}: ${content.substring(0, 4000)}` }] }]
-    });
-    return response.text;
-  } catch (error) {
-    return null;
-  }
-};
-
-export const generateBusinessPlan = async (data: any) => {
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: [{ parts: [{ text: `Create a professional business plan for ${data.name}` }] }]
-    });
-    return response.text;
-  } catch (error) {
-    return "";
   }
 };

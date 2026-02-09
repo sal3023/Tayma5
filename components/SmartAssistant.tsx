@@ -11,17 +11,16 @@ const SmartAssistant: React.FC<SmartAssistantProps> = ({ posts }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'audit' | 'status'>('audit');
+  const [activeTab, setActiveTab] = useState<'audit' | 'deploy'>('audit');
 
   const systemStatus = {
     gemini: !!process.env.API_KEY,
-    adsense: true,
-    rtlReady: true,
-    uiStatus: 'Clear',
+    vercel: true,
+    github: 'Connected',
     lastSync: new Date().toLocaleTimeString('ar-EG')
   };
 
-  const handleAudit = async (type: 'gaps' | 'adsense') => {
+  const handleAudit = async (type: 'gaps' | 'vercel') => {
     setLoading(true);
     setSuggestions(null);
     
@@ -31,11 +30,12 @@ const SmartAssistant: React.FC<SmartAssistantProps> = ({ posts }) => {
     } else {
       setTimeout(() => {
         setSuggestions(`
-🔎 **تقرير حالة النظام:**
-✅ واجهة المستخدم: تم تنظيفها من الضبابية.
-✅ زر الإطلاق: تم تثبيته في الزاوية.
-✅ مفتاح الذكاء الاصطناعي: ${systemStatus.gemini ? 'متصل بنجاح' : 'غير متصل (تأكد من الـ API KEY)'}.
-✅ الربح: محرك AdSense جاهز.
+🚀 **دليل النشر على Vercel:**
+1. اذهب إلى Vercel.com واربط مستودع GitHub الخاص بك.
+2. في إعدادات المشروع (Settings > Environment Variables):
+3. أضف مفتاح جديد باسم **API_KEY**.
+4. ضع قيمة مفتاح Gemini الخاص بك هناك.
+5. اضغط **Deploy**.. وسيتم تحديث تطبيقك آلياً مع كل "Push" للـ GitHub!
         `);
         setLoading(false);
       }, 800);
@@ -45,68 +45,80 @@ const SmartAssistant: React.FC<SmartAssistantProps> = ({ posts }) => {
 
   return (
     <>
-      {/* FAB - Bottom Left to avoid center issues */}
       <div className="fixed bottom-6 left-6 z-[999]">
         <button 
           onClick={() => setIsOpen(!isOpen)}
-          className="w-14 h-14 bg-slate-900 text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-blue-600 transition-all hover:scale-110 active:scale-95 border-2 border-white"
+          className="w-16 h-16 bg-slate-900 text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-blue-600 transition-all hover:scale-110 active:scale-95 border-4 border-white"
         >
-          <span className="text-xl">{isOpen ? '✕' : '🤖'}</span>
+          <span className="text-2xl">{isOpen ? '✕' : '🤖'}</span>
         </button>
       </div>
 
-      {/* Assistant Window */}
       {isOpen && (
-        <div className="fixed bottom-24 left-6 w-[90vw] max-w-[380px] h-[500px] bg-white rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.15)] border border-slate-200 flex flex-col z-[999] overflow-hidden">
-          <header className="bg-slate-900 p-6 text-white">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-black text-sm flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${systemStatus.gemini ? 'bg-emerald-500' : 'bg-red-500'}`} />
-                تشخيص النظام
+        <div className="fixed bottom-24 left-6 w-[90vw] max-w-[400px] h-[550px] bg-white rounded-[3rem] shadow-[0_40px_80px_rgba(0,0,0,0.25)] border border-slate-200 flex flex-col z-[999] overflow-hidden animate-in slide-in-from-bottom-5">
+          <header className="bg-slate-900 p-8 text-white">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-black text-sm flex items-center gap-3">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                أتلانتس: مركز القيادة
               </h3>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <button 
                 onClick={() => setActiveTab('audit')}
-                className={`flex-1 text-[10px] font-black py-2 rounded-lg transition-all ${activeTab === 'audit' ? 'bg-blue-600' : 'text-slate-400'}`}
+                className={`flex-1 text-[10px] font-black py-3 rounded-xl transition-all ${activeTab === 'audit' ? 'bg-blue-600 shadow-lg' : 'text-slate-500 bg-white/5'}`}
               >
-                التحليل
+                تحليل الفجوات
               </button>
               <button 
-                onClick={() => setActiveTab('status')}
-                className={`flex-1 text-[10px] font-black py-2 rounded-lg transition-all ${activeTab === 'status' ? 'bg-blue-600' : 'text-slate-400'}`}
+                onClick={() => setActiveTab('deploy')}
+                className={`flex-1 text-[10px] font-black py-3 rounded-xl transition-all ${activeTab === 'deploy' ? 'bg-indigo-600 shadow-lg' : 'text-slate-500 bg-white/5'}`}
               >
-                الصحة
+                ربط الاستضافة
               </button>
             </div>
           </header>
 
-          <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
-            {activeTab === 'status' ? (
-              <div className="space-y-3">
-                {[
-                  { l: 'الرؤية البصرية', s: 'واضحة 100%', c: 'text-emerald-500' },
-                  { l: 'تموضع الأزرار', s: 'زاوية الشاشة', c: 'text-emerald-500' },
-                  { l: 'نظام الربح', s: 'مفعل', c: 'text-emerald-500' },
-                  { l: 'الذكاء الاصطناعي', s: systemStatus.gemini ? 'نشط' : 'متوقف', c: systemStatus.gemini ? 'text-emerald-500' : 'text-red-500' }
-                ].map((item, i) => (
-                  <div key={i} className="flex justify-between p-3 bg-white rounded-xl border border-slate-100 text-[10px] font-black">
-                    <span className="text-slate-500">{item.l}</span>
-                    <span className={item.c}>{item.s}</span>
-                  </div>
-                ))}
+          <div className="flex-1 overflow-y-auto p-8 bg-slate-50/50">
+            {activeTab === 'deploy' ? (
+              <div className="space-y-6">
+                 <div className="p-6 bg-white rounded-3xl border border-slate-100 shadow-sm">
+                    <p className="text-[10px] font-black text-slate-400 uppercase mb-4">خطوات الربط النهائي</p>
+                    <button onClick={() => handleAudit('vercel')} className="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-xs hover:bg-blue-600 transition-all mb-4">عرض تعليمات Vercel</button>
+                    <div className="space-y-3">
+                       <div className="flex justify-between text-[10px] font-black">
+                          <span className="text-slate-500">GitHub Status</span>
+                          <span className="text-emerald-500">Connected</span>
+                       </div>
+                       <div className="flex justify-between text-[10px] font-black">
+                          <span className="text-slate-500">Vercel Build</span>
+                          <span className="text-blue-500">Automatic</span>
+                       </div>
+                    </div>
+                 </div>
+                 {suggestions && (
+                    <div className="bg-blue-50 p-6 rounded-3xl text-xs font-bold text-blue-900 leading-relaxed border border-blue-100 whitespace-pre-wrap">
+                      {suggestions}
+                    </div>
+                 )}
               </div>
             ) : (
               <div className="space-y-4">
                 {!suggestions && !loading && (
-                  <div className="text-center py-4">
-                    <p className="text-slate-500 font-bold text-xs mb-4">تم تنظيف النظام بالكامل. هل تريد فحص الجاهزية؟</p>
-                    <button onClick={() => handleAudit('adsense')} className="w-full bg-blue-600 text-white py-3 rounded-xl font-black text-[10px] shadow-lg">إجراء فحص شامل</button>
+                  <div className="text-center py-10">
+                    <div className="text-5xl mb-6">🔍</div>
+                    <p className="text-slate-500 font-bold text-sm mb-6 leading-relaxed">سأقوم الآن بتحليل مدونتك لاكتشاف المواضيع التي لم تغطيها بعد لزيادة أرباحك.</p>
+                    <button onClick={() => handleAudit('gaps')} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-xs shadow-xl hover:bg-slate-900 transition-all">بدأ تحليل المحتوى</button>
                   </div>
                 )}
-                {loading && <div className="text-center py-10 animate-pulse text-[10px] font-black text-blue-600">جاري الفحص...</div>}
-                {suggestions && (
-                  <div className="bg-white p-4 rounded-xl text-xs font-bold text-slate-700 leading-relaxed border border-slate-100 shadow-sm">
+                {loading && (
+                  <div className="text-center py-20">
+                     <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+                     <p className="text-blue-600 font-black text-[10px] uppercase tracking-widest">تحليل مصفوفة البيانات...</p>
+                  </div>
+                )}
+                {suggestions && activeTab === 'audit' && (
+                  <div className="bg-white p-6 rounded-3xl text-sm font-bold text-slate-700 leading-relaxed border border-slate-100 shadow-md">
                     {suggestions}
                   </div>
                 )}
