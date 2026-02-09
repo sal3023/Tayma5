@@ -1,5 +1,5 @@
 {
-  "name": "eliteblog-pro",
+  "name": "eliteblog-pro-global",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "@google/genai": "^1.37.0",
     "recharts": "^3.6.0",
     "react-markdown": "^9.0.1",

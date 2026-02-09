@@ -1,5 +1,9 @@
 {
-  "name": "EliteBlog Pro",
-  "description": "A world-class, professional blogging platform with AI-powered insights, advanced analytics, and a sophisticated RTL-ready design.",
-  "requestFramePermissions": []
+  "name": "EliteBlog Pro Global",
+  "description": "Premium AI-Powered Blogging Ecosystem with AdSense integration, Global Trend Analysis, and Strategic Wallet Management.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
 }

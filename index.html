@@ -4,80 +4,61 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EliteBlog Pro - نظام التدوين الذكي</title>
-    <meta name="description" content="EliteBlog Pro - منصة تدوين احترافية بمعايير عالمية وتقنيات ذكاء اصطناعي." />
-    <!-- Google AdSense Auto Ads -->
+    <title>EliteBlog Pro | منصة التدوين الذكية العالمية</title>
+    <meta name="description" content="أقوى منصة تدوين مدعومة بالذكاء الاصطناعي لاستقطاب الترندات العالمية وتحقيق أرباح AdSense." />
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="EliteBlog Pro - Global AI Blogging Platform" />
+    <meta property="og:description" content="إدارة أرباحك وتدويناتك بذكاء "أتلانتس" الخارق." />
+    <meta property="og:image" content="https://eliteblog.pro/og-image.jpg" />
+
+    <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9209979470286545" crossorigin="anonymous"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     <style>
-      :root {
-        --primary-blue: #2563eb;
-        --deep-slate: #0f172a;
-      }
       body {
-        font-family: 'Tajawal', 'Inter', sans-serif;
+        font-family: 'Tajawal', sans-serif;
         background-color: #f8fafc;
-        color: var(--deep-slate);
-        scroll-behavior: smooth;
-        overflow-x: hidden;
+        color: #0f172a;
         margin: 0;
-        padding: 0;
+        scroll-behavior: smooth;
       }
-      /* تعطيل الضبابية تماماً لضمان عدم وجود "تغبيش" */
-      * {
-        backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
-      }
-      .glass-effect {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-      }
-      .text-gradient {
-        background: linear-gradient(135deg, #0f172a 0%, #2563eb 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-      .hover-lift {
-        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-      .hover-lift:hover {
-        transform: translateY(-5px);
-      }
-      ::selection {
-        background-color: #dbeafe;
-        color: #1e40af;
-      }
-      /* Markdown Overrides */
-      .prose h1, .prose h2, .prose h3 { font-weight: 900 !important; color: #0f172a !important; margin-top: 1.5rem !important; }
-      .prose p { margin-bottom: 1.2rem !important; line-height: 1.8 !important; font-size: 1.1rem !important; }
-      .prose ul { list-style-type: disc !important; padding-right: 1.5rem !important; margin-bottom: 1.5rem !important; }
+      /* إخفاء شريط التمرير العرضي */
+      body { overflow-x: hidden; }
       
-      /* تحسين استقرار تحميل الصفحة */
-      #root {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
+      /* تحسين استجابة الصور */
+      img { max-width: 100%; height: auto; }
+
+      /* أنيميشن التحميل */
+      .fade-in { animation: fadeIn 0.8s ease-out; }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
       }
     </style>
-  <script type="importmap">
+    <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react-dom": "https://esm.sh/react-dom@^19.2.3",
+    "react-dom/client": "https://esm.sh/react-dom@^19.2.3/client",
     "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
     "recharts": "https://esm.sh/recharts@^3.6.0",
     "react-markdown": "https://esm.sh/react-markdown@^9.0.1",
-    "remark-gfm": "https://esm.sh/remark-gfm@^4.0.0"
+    "remark-gfm": "https://esm.sh/remark-gfm@^4.0.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/"
   }
 }
 </script>
-</head>
+  </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
