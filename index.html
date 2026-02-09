@@ -11,7 +11,6 @@
     <meta property="og:type" content="website" />
     <meta property="og:title" content="EliteBlog Pro - Global AI Blogging Platform" />
     <meta property="og:description" content="إدارة أرباحك وتدويناتك بذكاء "أتلانتس" الخارق." />
-    <meta property="og:image" content="https://eliteblog.pro/og-image.jpg" />
 
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9209979470286545" crossorigin="anonymous"></script>
@@ -27,38 +26,34 @@
         color: #0f172a;
         margin: 0;
         scroll-behavior: smooth;
+        overflow-x: hidden;
       }
-      /* إخفاء شريط التمرير العرضي */
-      body { overflow-x: hidden; }
-      
-      /* تحسين استجابة الصور */
       img { max-width: 100%; height: auto; }
-
-      /* أنيميشن التحميل */
       .fade-in { animation: fadeIn 0.8s ease-out; }
       @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
       }
     </style>
-    <script type="importmap">
+  <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom": "https://esm.sh/react-dom@^19.2.3",
-    "react-dom/client": "https://esm.sh/react-dom@^19.2.3/client",
-    "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
-    "recharts": "https://esm.sh/recharts@^3.6.0",
-    "react-markdown": "https://esm.sh/react-markdown@^9.0.1",
-    "remark-gfm": "https://esm.sh/remark-gfm@^4.0.0",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/"
+    "recharts": "https://esm.sh/recharts@^3.7.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.3",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "remark-gfm": "https://esm.sh/remark-gfm@^4.0.1",
+    "react-markdown": "https://esm.sh/react-markdown@^10.1.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.40.0"
   }
 }
 </script>
-  </head>
+</head>
   <body>
     <div id="root"></div>
+    <!-- ملاحظة: Vite سيتعامل مع هذا الملف ويقوم بترجمته آلياً -->
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
