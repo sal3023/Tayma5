@@ -2,13 +2,18 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { Post } from "../types";
 
-// Initialize the Google GenAI client with the API key from environment variables
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// استدعاء المفتاح بشكل آمن من البيئة المحددة في Vercel
+const getApiKey = () => process.env.API_KEY || "";
 
 /**
  * محرك أتلانتس الاستراتيجي 2.0 - هندسة المحتوى عالي الربحية
  */
 export const generateFullArticle = async (title: string, category: string, market: string = 'Global') => {
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error("API Key is missing. Please set it in Vercel.");
+  
+  const ai = new GoogleGenAI({ apiKey });
+  
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
@@ -36,7 +41,6 @@ export const generateFullArticle = async (title: string, category: string, marke
 
     let content = response.text || "";
     
-    // Extract grounding chunks and append URLs to the content as required by search grounding rules
     const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
     if (groundingChunks && groundingChunks.length > 0) {
       content += "\n\n### المصادر والمراجع (References)\n";
@@ -49,20 +53,17 @@ export const generateFullArticle = async (title: string, category: string, marke
       });
     }
 
-    return {
-      content: content,
-      grounding: groundingChunks || []
-    };
+    return { content, grounding: groundingChunks || [] };
   } catch (error) {
     console.error("Atlantis Pro Error:", error);
     throw new Error("فشل محرك التوليد في الوصول للبيانات العالمية.");
   }
 };
 
-/**
- * رادار الترندات المربحة عالمياً 2.0
- */
 export const fetchGlobalTrends = async (category: string, region: string = 'Global') => {
+  const apiKey = getApiKey();
+  if (!apiKey) return [];
+  const ai = new GoogleGenAI({ apiKey });
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
@@ -86,128 +87,92 @@ export const fetchGlobalTrends = async (category: string, region: string = 'Glob
         }
       }
     });
-    // Use .text property to get the generated string
     return JSON.parse(response.text || '[]');
-  } catch (error) {
-    return [];
-  }
+  } catch (error) { return []; }
 };
 
-/**
- * توليد ملخص تنفيذي ذكي للمقال
- */
 export const generatePostSummary = async (content: string) => {
+  const apiKey = getApiKey();
+  if (!apiKey) return null;
+  const ai = new GoogleGenAI({ apiKey });
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: [{ parts: [{ text: `قم بتلخيص المقال التالي في شكل نقاط مركزة تبرز الجوهر المالي والتقني: \n\n ${content.substring(0, 5000)}` }] }],
+      contents: [{ parts: [{ text: `قم بتلخيص المقال التالي: \n\n ${content.substring(0, 5000)}` }] }],
     });
     return response.text || null;
-  } catch (error) {
-    console.error("Summary Error:", error);
-    return null;
-  }
+  } catch (error) { return null; }
 };
 
-/**
- * ترجمة المقالات للأسواق العالمية المستهدفة
- */
 export const translateArticle = async (content: string, targetLang: string) => {
+  const apiKey = getApiKey();
+  if (!apiKey) return null;
+  const ai = new GoogleGenAI({ apiKey });
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: [{ parts: [{ text: `Translate the following article to ${targetLang}. Keep the markdown structure: \n\n ${content}` }] }],
+      contents: [{ parts: [{ text: `Translate to ${targetLang}: \n\n ${content}` }] }],
     });
     return response.text || null;
-  } catch (error) {
-    console.error("Translation Error:", error);
-    return null;
-  }
+  } catch (error) { return null; }
 };
 
-/**
- * مولد خطط الأعمال الاستراتيجية AI
- */
 export const generateBusinessPlan = async (formData: { name: string, industry: string, goals: string }) => {
+  const apiKey = getApiKey();
+  if (!apiKey) return "API Key missing";
+  const ai = new GoogleGenAI({ apiKey });
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
-      contents: [{ parts: [{ text: `قم بإنشاء خطة عمل شاملة لـ "${formData.name}" في قطاع "${formData.industry}". الأهداف: ${formData.goals}. ركز على الأرباح والنمو العالمي.` }] }],
-      config: {
-        thinkingConfig: { thinkingBudget: 4000 }
-      }
+      contents: [{ parts: [{ text: `إنشاء خطة عمل لـ ${formData.name} في قطاع ${formData.industry}.` }] }],
     });
-    return response.text || "فشل في توليد الخطة.";
-  } catch (error) {
-    console.error("Business Plan Error:", error);
-    return "فشل في الوصول للمحرك الاستراتيجي.";
-  }
+    return response.text || "فشل التوليد.";
+  } catch (error) { return "خطأ في الاتصال."; }
 };
 
-/**
- * تحليل فجوات المحتوى وفرص الربح (Gap Analysis)
- */
 export const analyzeBlogGaps = async (posts: Post[]) => {
+  const apiKey = getApiKey();
+  if (!apiKey) return "API Key missing";
+  const ai = new GoogleGenAI({ apiKey });
   try {
-    const titles = posts.map(p => p.title).join(", ");
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
-      contents: [{ parts: [{ text: `بناءً على العناوين الحالية (${titles})، ما هي الفجوات في المحتوى التي يمكن استغلالها لزيادة الربح (High CPC)؟` }] }],
+      contents: [{ parts: [{ text: `حلل فجوات المحتوى لهذه العناوين: ${posts.map(p => p.title).join(", ")}` }] }],
     });
-    return response.text || "تعذر التحليل حالياً.";
-  } catch (error) {
-    console.error("Gap Analysis Error:", error);
-    return "فشل المحرك في تحليل البيانات.";
-  }
+    return response.text || "تعذر التحليل.";
+  } catch (error) { return "خطأ فني."; }
 };
 
-/**
- * توليد صور غلاف احترافية باستخدام نموذج الصور المتقدم
- */
 export const generateImageForPost = async (prompt: string) => {
+  const apiKey = getApiKey();
+  if (!apiKey) return null;
+  const ai = new GoogleGenAI({ apiKey });
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-image-preview',
-      contents: [{
-        parts: [{
-          text: `Professional editorial illustration for a high-end business blog. Theme: ${prompt}. Photorealistic, cinematic lighting, corporate blue and slate gray palette, 4k resolution, wide aspect ratio.`
-        }]
-      }],
-      config: {
-        imageConfig: { aspectRatio: "16:9", imageSize: "1K" }
-      }
+      contents: [{ parts: [{ text: prompt }] }],
+      config: { imageConfig: { aspectRatio: "16:9", imageSize: "1K" } }
     });
-    // Iterate through all parts to find the image data as per guidelines
     for (const part of response.candidates?.[0]?.content?.parts || []) {
-      if (part.inlineData) {
-        return `data:image/png;base64,${part.inlineData.data}`;
-      }
+      if (part.inlineData) return `data:image/png;base64,${part.inlineData.data}`;
     }
     return null;
-  } catch (error) {
-    return null;
-  }
+  } catch (error) { return null; }
 };
 
-/**
- * تحويل النص إلى كلام (Text-to-Speech)
- */
 export const textToSpeech = async (text: string) => {
+  const apiKey = getApiKey();
+  if (!apiKey) return null;
+  const ai = new GoogleGenAI({ apiKey });
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
-      contents: [{ parts: [{ text: text.substring(0, 1500) }] }],
+      contents: [{ parts: [{ text: text.substring(0, 1000) }] }],
       config: {
         responseModalities: [Modality.AUDIO],
-        speechConfig: {
-          voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: 'Puck' },
-          },
-        },
+        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Puck' } } },
       },
     });
     return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-  } catch (error) {
-    return null;
-  }
+  } catch (error) { return null; }
 };
