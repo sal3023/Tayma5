@@ -18,58 +18,56 @@ const Home: React.FC<HomeProps> = ({ posts, onPostClick }) => {
     : posts.slice(1).filter(p => p.category === activeCategory);
 
   return (
-    <div className="space-y-20 pb-20">
-      {/* Hero Section */}
+    <div className="space-y-16 pb-20">
+      {/* Hero Section Optimized */}
       <section 
-        className="relative rounded-[3rem] overflow-hidden h-[600px] flex items-end group cursor-pointer shadow-3xl" 
+        className="relative rounded-[2.5rem] overflow-hidden min-h-[500px] md:h-[600px] flex items-end group cursor-pointer shadow-2xl bg-slate-900" 
         onClick={() => onPostClick(featuredPost.id)}
       >
         <img 
           src={featuredPost.image} 
           alt={featuredPost.title}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110 opacity-60"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent" />
-        <div className="relative p-10 md:p-20 w-full max-w-4xl">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="px-4 py-1.5 rounded-full bg-blue-600/90 backdrop-blur-md text-white text-xs font-bold uppercase tracking-widest">
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent" />
+        <div className="relative p-8 md:p-16 w-full max-w-4xl z-10">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="px-4 py-1 rounded-full bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/20">
               مقال مختار
             </span>
-            <span className="text-white/60 text-xs font-medium uppercase tracking-widest">{featuredPost.category}</span>
+            <span className="text-white/60 text-[10px] font-black uppercase tracking-widest">{featuredPost.category}</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight drop-shadow-2xl">
+          <h1 className="text-3xl md:text-6xl font-black text-white mb-6 leading-tight">
             {featuredPost.title}
           </h1>
-          <p className="text-slate-200 text-xl mb-10 line-clamp-2 max-w-2xl leading-relaxed opacity-90">
+          <p className="text-slate-200 text-lg md:text-xl mb-8 line-clamp-2 max-w-2xl leading-relaxed opacity-90 font-medium">
             {featuredPost.excerpt}
           </p>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full border-2 border-white/20 p-0.5">
-                <div className="w-full h-full rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center font-bold text-white uppercase">
-                  {featuredPost.author[0]}
-                </div>
+              <div className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center font-black text-white bg-white/10">
+                {featuredPost.author[0]}
               </div>
               <div className="flex flex-col">
-                <span className="text-white font-bold">{featuredPost.author}</span>
-                <span className="text-white/50 text-xs uppercase tracking-tighter">{featuredPost.date}</span>
+                <span className="text-white font-black text-sm">{featuredPost.author}</span>
+                <span className="text-white/50 text-[10px] uppercase font-bold">{featuredPost.date}</span>
               </div>
             </div>
-            <div className="h-8 w-px bg-white/20"></div>
-            <span className="text-white/80 text-sm font-bold uppercase tracking-widest">قراءة المقال الكامل ↗</span>
+            <div className="h-6 w-px bg-white/20"></div>
+            <span className="text-white/80 text-xs font-black uppercase tracking-widest group-hover:text-blue-400 transition-colors">اقرأ المزيد ↗</span>
           </div>
         </div>
       </section>
 
       {/* Content Section */}
       <section>
-        <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
-          <div>
-            <h2 className="text-3xl font-black text-slate-900 flex items-center gap-4">
-              أحدث الرؤى الفكرية
-              <div className="w-12 h-1.5 bg-blue-600 rounded-full" />
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
+          <div className="text-center md:text-right">
+            <h2 className="text-3xl font-black text-slate-900 flex items-center justify-center md:justify-start gap-4">
+              أحدث المقالات
+              <div className="w-10 h-1 bg-blue-600 rounded-full" />
             </h2>
-            <p className="text-slate-500 mt-2 font-medium">استكشف مواضيعنا المختارة بعناية لتحفيز نموك المعرفي.</p>
+            <p className="text-slate-500 mt-2 font-bold text-sm uppercase tracking-wide">اكتشف المحتوى العالمي المربح</p>
           </div>
           
           <div className="flex gap-2 p-1.5 bg-slate-100 rounded-2xl overflow-x-auto max-w-full">
@@ -77,9 +75,9 @@ const Home: React.FC<HomeProps> = ({ posts, onPostClick }) => {
               <button 
                 key={cat} 
                 onClick={() => setActiveCategory(cat)}
-                className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+                className={`px-6 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap ${
                   activeCategory === cat 
-                    ? 'bg-white text-blue-600 shadow-md' 
+                    ? 'bg-white text-blue-600 shadow-lg' 
                     : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
@@ -90,14 +88,15 @@ const Home: React.FC<HomeProps> = ({ posts, onPostClick }) => {
         </div>
 
         {filteredPosts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredPosts.map(post => (
               <PostCard key={post.id} post={post} onClick={() => onPostClick(post.id)} />
             ))}
           </div>
         ) : (
-          <div className="py-20 text-center bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200">
-            <p className="text-slate-400 font-bold">لا توجد مقالات في هذا القسم حالياً.</p>
+          <div className="py-24 text-center bg-white rounded-[2rem] border border-slate-100 shadow-inner">
+            <div className="text-4xl mb-4">📭</div>
+            <p className="text-slate-400 font-black text-sm uppercase tracking-widest">لا توجد مقالات في هذا القسم حالياً</p>
           </div>
         )}
       </section>
