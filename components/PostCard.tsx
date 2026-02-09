@@ -56,6 +56,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
         <img 
           src={post.image} 
           alt={post.title}
+          loading="lazy"
           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
         

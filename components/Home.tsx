@@ -27,6 +27,7 @@ const Home: React.FC<HomeProps> = ({ posts, onPostClick }) => {
         <img 
           src={featuredPost.image} 
           alt={featuredPost.title}
+          loading="eager"
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110 opacity-60"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent" />
