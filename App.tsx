@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ViewMode, Post, TrendIdea } from './types';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
@@ -12,6 +12,7 @@ import TrendExplorer from './components/TrendExplorer';
 import SmartAssistant from './components/SmartAssistant';
 import LegalPages from './components/LegalPages';
 import Wallet from './components/Wallet';
+import ExternalBlogAnalyser from './components/ExternalBlogAnalyser';
 
 const INITIAL_POSTS: Post[] = [
   {
@@ -31,11 +32,16 @@ const INITIAL_POSTS: Post[] = [
   }
 ];
 
+const GA4_STORAGE_KEY = 'ga4_measurement_id';
+
 const App: React.FC = () => {
   const [view, setView] = useState<ViewMode>(ViewMode.HOME);
   const [posts, setPosts] = useState<Post[]>(INITIAL_POSTS);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [editingIdea, setEditingIdea] = useState<Partial<Post> | null>(null);
+  const [ga4MeasurementId, setGa4MeasurementIdState] = useState<string | null>(() => {
+    return localStorage.getItem(GA4_STORAGE_KEY);
+  });
 
   const handlePostClick = (id: string) => {
     setSelectedPostId(id);
@@ -59,11 +65,57 @@ const App: React.FC = () => {
 
   const selectedPost = posts.find(p => p.id === selectedPostId);
 
+  // Function to set GA4 Measurement ID and update localStorage
+  const setGa4MeasurementId = useCallback((id: string | null) => {
+    if (id) {
+      localStorage.setItem(GA4_STORAGE_KEY, id);
+    } else {
+      localStorage.removeItem(GA4_STORAGE_KEY);
+    }
+    setGa4MeasurementIdState(id);
+  }, []);
+
+  // Effect to dynamically inject GA4 script
+  useEffect(() => {
+    const injectGa4Script = (id: string) => {
+      if (!id) return;
+
+      // Remove existing GA scripts to prevent duplicates
+      document.querySelectorAll('script[data-ga-script]').forEach(script => script.remove());
+
+      // Initialize dataLayer and gtag if not already present
+      (window as any).dataLayer = (window as any).dataLayer || [];
+      function gtag(...args: any[]) { (window as any).dataLayer.push(args); }
+      (window as any).gtag = gtag;
+
+      gtag('js', new Date());
+      gtag('config', id);
+
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
+      script.dataset.gaScript = 'true'; // Custom attribute to easily find and remove
+      document.head.appendChild(script);
+
+      console.log(`GA4 script injected with ID: ${id}`);
+    };
+
+    if (ga4MeasurementId) {
+      injectGa4Script(ga4MeasurementId);
+    } else {
+      // If ID is removed, clean up scripts
+      document.querySelectorAll('script[data-ga-script]').forEach(script => script.remove());
+      // Optionally clear dataLayer and gtag if they were only for this GA instance
+      (window as any).dataLayer = undefined;
+      (window as any).gtag = undefined;
+    }
+  }, [ga4MeasurementId]);
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
       <Navbar currentView={view} setView={setView} />
-      
-      <main className="flex-1 max-w-7xl mx-auto px-4 py-8 w-full">
+      <h1 className="text-center text-3xl font-bold text-blue-600 py-8">EliteBlog Pro - التطبيق يعمل!</h1>
+      <main className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full">
         {view === ViewMode.HOME && <Home posts={posts} onPostClick={handlePostClick} />}
         {view === ViewMode.POST && selectedPost && <PostDetail post={selectedPost} onBack={() => setView(ViewMode.HOME)} />}
         {view === ViewMode.EDITOR && (
@@ -73,13 +125,20 @@ const App: React.FC = () => {
             initialData={editingIdea || {}}
           />
         )}
-        {view === ViewMode.DASHBOARD && <Dashboard posts={posts} onUpdatePost={(updatedPost) => setPosts(posts.map(p => p.id === updatedPost.id ? updatedPost : p))} />}
+        {view === ViewMode.DASHBOARD && 
+          <Dashboard 
+            posts={posts} 
+            onUpdatePost={(updatedPost) => setPosts(posts.map(p => p.id === updatedPost.id ? updatedPost : p))} 
+            ga4MeasurementId={ga4MeasurementId}
+            setGa4MeasurementId={setGa4MeasurementId}
+          />}
         {view === ViewMode.WALLET && <Wallet />}
         {view === ViewMode.SITEMAP && <SitemapView posts={posts} onBack={() => setView(ViewMode.HOME)} />}
         {view === ViewMode.BUSINESS_PLAN && <BusinessPlanGenerator />}
         {view === ViewMode.TRENDS && <TrendExplorer onStartArticle={handleStartArticleFromTrend} />}
         {view === ViewMode.PRIVACY && <LegalPages type="privacy" onBack={() => setView(ViewMode.HOME)} />}
         {view === ViewMode.TERMS && <LegalPages type="terms" onBack={() => setView(ViewMode.HOME)} />}
+        {view === ViewMode.EXTERNAL_BLOG_ANALYSER && <ExternalBlogAnalyser posts={posts} ga4MeasurementId={ga4MeasurementId} onBack={() => setView(ViewMode.HOME)} />}
       </main>
 
       <SmartAssistant posts={posts} />

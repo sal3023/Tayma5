@@ -37,7 +37,7 @@ const LegalPages: React.FC<LegalPageProps> = ({ type, onBack }) => {
         
         <div className="space-y-12">
           {content.sections.map((s, i) => (
-            <div key={i} className="border-r-4 border-blue-600 pr-8">
+            <div key={i} className="border-r-4 border-blue-600 pr-8 pl-4 py-2">
               <h3 className="text-2xl font-black mb-4 text-slate-800">{s.t}</h3>
               <p className="text-slate-600 leading-[1.8] font-medium">{s.d}</p>
             </div>

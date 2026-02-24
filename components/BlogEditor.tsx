@@ -33,8 +33,9 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel, initialData }
     if (formData.content.length > 4000) score += 20;
     if (formData.content.includes('#')) score += 15; // Markdown headings
     if (formData.image.startsWith('data:')) score += 15; // Custom image
-    setSeoScore(score);
-  }, [formData.content, formData.title, formData.image]);
+    if (formData.targetMarket === 'Global') score += 10; // Bonus for global
+    setSeoScore(Math.min(score, 100)); // Cap at 100
+  }, [formData.content, formData.title, formData.image, formData.targetMarket]);
 
   const handleGenerateImage = async () => {
     if (!formData.title) return alert('يرجى كتابة عنوان أولاً');
@@ -87,11 +88,11 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel, initialData }
         <header className="mb-16 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10">
           <div className="flex-1">
             <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4">محرر الأرباح "أتلانتس" 🚀</h1>
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap items-center gap-6">
                <p className="text-slate-500 font-bold text-lg">استهداف الأسواق العالمية بأقوى الكلمات المفتاحية.</p>
-               <div className="flex items-center gap-3 px-5 py-2 bg-slate-900 rounded-2xl">
-                  <span className="text-white text-[10px] font-black uppercase">SEO SCORE</span>
-                  <span className={`text-xl font-black ${seoScore > 70 ? 'text-emerald-400' : 'text-orange-400'}`}>{seoScore}%</span>
+               <div className="flex items-center gap-3 px-5 py-2 bg-emerald-50 rounded-2xl shadow-lg shadow-emerald-200/50 border border-emerald-100">
+                  <span className="text-emerald-600 text-[10px] font-black uppercase">SEO SCORE</span>
+                  <span className={`text-xl font-black ${seoScore > 70 ? 'text-emerald-500' : 'text-orange-500'}`}>{seoScore}%</span>
                </div>
             </div>
           </div>
@@ -109,16 +110,16 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel, initialData }
           {/* Target Market and Category row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
              <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">السوق المستهدف</label>
-                <div className="flex gap-2">
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">السوق المستهدف</label>
+                <div className="flex gap-2 p-1.5 bg-slate-100 rounded-2xl border border-slate-100 shadow-inner">
                    {['Global', 'USA', 'Europe'].map(m => (
-                     <button key={m} type="button" onClick={() => setFormData({...formData, targetMarket: m as any})} className={`flex-1 py-3 rounded-2xl font-black text-xs transition-all ${formData.targetMarket === m ? 'bg-slate-900 text-white' : 'bg-slate-50 text-slate-400'}`}>{m}</button>
+                     <button key={m} type="button" onClick={() => setFormData({...formData, targetMarket: m as any})} className={`flex-1 py-3 rounded-xl font-black text-xs transition-all ${formData.targetMarket === m ? 'bg-white text-blue-600 shadow-lg border border-blue-100' : 'bg-slate-50 text-slate-500 hover:text-slate-900'}`}>{m}</button>
                    ))}
                 </div>
              </div>
              <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">القسم</label>
-                <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="w-full bg-slate-50 border-none rounded-2xl px-6 py-3 font-black text-xs outline-none">
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">القسم</label>
+                <select value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})} className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 font-black text-xs outline-none focus:border-blue-600 transition-all shadow-inner">
                    {['تقنية', 'اقتصاد', 'عقارات', 'صحة'].map(c => <option key={c}>{c}</option>)}
                 </select>
              </div>
@@ -129,14 +130,14 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel, initialData }
             type="text" 
             value={formData.title}
             onChange={(e) => setFormData({...formData, title: e.target.value})}
-            className="w-full border-b-4 border-slate-50 focus:border-blue-600 outline-none text-4xl font-black py-6 transition-all bg-transparent"
+            className="w-full border-b-4 border-slate-100 focus:border-blue-600 outline-none text-4xl font-black py-6 transition-all bg-transparent placeholder-slate-300"
             placeholder="اكتب العنوان هنا..."
           />
 
-          <div className="relative rounded-[3rem] overflow-hidden h-96 bg-slate-50">
+          <div className="relative rounded-[3rem] overflow-hidden h-96 bg-slate-50 border border-slate-100 shadow-inner">
              <img src={formData.image} className="w-full h-full object-cover" alt="Preview" />
-             <button type="button" onClick={handleGenerateImage} disabled={loadingImg} className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-md text-slate-900 px-6 py-3 rounded-2xl font-black text-xs shadow-2xl hover:scale-105 transition-all">
-                {loadingImg ? 'جاري التوليد...' : '🪄 تغيير الصورة بالذكاء الاصطناعي'}
+             <button type="button" onClick={handleGenerateImage} disabled={loadingImg} className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-md text-slate-900 px-6 py-3 rounded-2xl font-black text-xs shadow-2xl hover:scale-105 transition-all flex items-center gap-2">
+                {loadingImg ? <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" /> : '🪄'} تغيير الصورة بالذكاء الاصطناعي
              </button>
           </div>
 
@@ -145,15 +146,21 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel, initialData }
             rows={20}
             value={formData.content}
             onChange={(e) => setFormData({...formData, content: e.target.value})}
-            className="w-full border-2 border-slate-50 rounded-[3rem] px-10 py-10 focus:border-blue-600 outline-none leading-relaxed text-lg font-medium bg-slate-50/20"
+            className="w-full border-2 border-slate-100 rounded-[3rem] px-10 py-10 focus:border-blue-600 outline-none leading-relaxed text-lg font-medium bg-slate-50/50 shadow-inner resize-y"
             placeholder="ابدأ الكتابة..."
           ></textarea>
 
           <div className="flex gap-4 pt-10">
             <button type="submit" className="flex-1 bg-slate-900 text-white font-black py-6 rounded-3xl shadow-2xl hover:bg-blue-600 transition-all text-xl">نشر المقال عالمياً</button>
-            <button type="button" onClick={onCancel} className="px-10 py-6 text-slate-400 font-black">إلغاء</button>
+            <button type="button" onClick={onCancel} className="px-10 py-6 text-slate-400 font-black hover:text-red-500 transition-colors">إلغاء</button>
           </div>
         </form>
+        {statusMsg && (
+          <div className="mt-8 text-center text-blue-600 font-bold text-sm flex items-center justify-center gap-3 animate-in fade-in">
+             <div className="w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+             {statusMsg}
+          </div>
+        )}
       </div>
     </div>
   );

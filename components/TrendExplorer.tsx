@@ -40,12 +40,12 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onStartArticle }) => {
       <div className="flex flex-col md:flex-row justify-center gap-10 mb-20 px-4">
         <div className="space-y-4">
            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center block">تغيير السوق</label>
-           <div className="flex gap-2 p-1.5 bg-slate-100 rounded-[2rem]">
+           <div className="flex gap-2 p-1.5 bg-slate-100 rounded-[2rem] shadow-inner border border-slate-100">
               {['USA', 'Europe', 'Asia', 'MENA'].map(r => (
                 <button 
                   key={r}
                   onClick={() => setRegion(r)}
-                  className={`px-8 py-3 rounded-[1.5rem] font-black text-xs transition-all ${region === r ? 'bg-white text-blue-600 shadow-xl' : 'text-slate-500'}`}
+                  className={`px-8 py-3 rounded-[1.5rem] font-black text-xs transition-all ${region === r ? 'bg-white text-blue-600 shadow-xl border border-blue-100' : 'bg-slate-50 text-slate-500 hover:text-slate-900'}`}
                 >
                   {r}
                 </button>
@@ -54,12 +54,12 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onStartArticle }) => {
         </div>
         <div className="space-y-4">
            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center block">القطاع الربحي</label>
-           <div className="flex gap-2 p-1.5 bg-slate-100 rounded-[2rem] overflow-x-auto no-scrollbar">
+           <div className="flex gap-2 p-1.5 bg-slate-100 rounded-[2rem] overflow-x-auto no-scrollbar shadow-inner border border-slate-100">
               {['تمويل وتقنية', 'تأمين', 'عقارات', 'ذكاء اصطناعي'].map(c => (
                 <button 
                   key={c}
                   onClick={() => setCategory(c)}
-                  className={`px-8 py-3 rounded-[1.5rem] font-black text-xs transition-all whitespace-nowrap ${category === c ? 'bg-white text-blue-600 shadow-xl' : 'text-slate-500'}`}
+                  className={`px-8 py-3 rounded-[1.5rem] font-black text-xs transition-all whitespace-nowrap ${category === c ? 'bg-white text-blue-600 shadow-xl border border-blue-100' : 'bg-slate-50 text-slate-500 hover:text-slate-900'}`}
                 >
                   {c}
                 </button>
@@ -76,15 +76,15 @@ const TrendExplorer: React.FC<TrendExplorerProps> = ({ onStartArticle }) => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {trends.map((trend, idx) => (
-            <div key={idx} className="bg-white rounded-[3.5rem] p-12 border border-slate-100 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] hover:shadow-blue-500/10 transition-all group flex flex-col relative overflow-hidden">
+            <div key={idx} className="bg-white rounded-[3.5rem] p-12 border border-slate-100 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] hover:shadow-blue-500/10 transition-all group flex flex-col relative overflow-hidden hover:-translate-y-1 duration-300">
               <div className="absolute top-0 right-0 bg-emerald-500 text-white px-8 py-3 rounded-bl-[2rem] text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                 <span>High CPC: {trend.estimatedCPC}</span>
+                 <span>CPC مرتفع: {trend.estimatedCPC}</span>
                  <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
               </div>
               
               <div className="mt-6 mb-8">
-                 <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-4 py-1.5 rounded-full">
-                    {trend.region} Target
+                 <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100">
+                    استهداف: {trend.region}
                  </span>
               </div>
 

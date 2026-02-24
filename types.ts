@@ -36,5 +36,7 @@ export enum ViewMode {
   TRENDS = 'TRENDS',
   PRIVACY = 'PRIVACY',
   TERMS = 'TERMS',
-  WALLET = 'WALLET'
+  WALLET = 'WALLET',
+  EXTERNAL_BLOG_ANALYSER = 'EXTERNAL_BLOG_ANALYSER', // إضافة وضع العرض الجديد
+  ASSISTANT = 'ASSISTANT' // وضع عرض للمساعد الذكي
 }

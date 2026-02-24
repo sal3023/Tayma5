@@ -21,14 +21,14 @@ const Wallet: React.FC = () => {
       <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-8">
         <div>
           <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-2 tracking-tighter">المحفظة الاستراتيجية 💳</h1>
-          <p className="text-slate-500 font-bold">مركز إدارة السيولة العالمية وأرباح أتلانتس.</p>
+          <p className="text-slate-500 font-bold text-lg">مركز إدارة السيولة العالمية وأرباح أتلانتس.</p>
         </div>
         <div className="flex bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
            {Object.keys(exchangeRates).map(curr => (
              <button 
                key={curr}
                onClick={() => setCurrency(curr)}
-               className={`px-5 py-2 rounded-xl text-xs font-black transition-all ${currency === curr ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-900'}`}
+               className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all ${currency === curr ? 'bg-blue-600 text-white shadow-lg border border-blue-100' : 'text-slate-400 hover:text-slate-900 hover:bg-slate-50'}`}
              >
                {curr}
              </button>
@@ -39,7 +39,7 @@ const Wallet: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           {/* Main Balance Card */}
-          <div className="bg-slate-900 rounded-[3.5rem] p-12 text-white relative overflow-hidden shadow-2xl">
+          <div className="bg-slate-900 rounded-[3.5rem] p-12 text-white relative overflow-hidden shadow-2xl border border-slate-800">
              <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
              <div className="relative z-10">
                 <div className="flex justify-between items-start mb-16">
@@ -83,9 +83,9 @@ const Wallet: React.FC = () => {
                   { desc: 'أرباح AdSense - ألمانيا', amount: 180.20, date: 'أمس', type: 'in' },
                   { desc: 'سحب إلى حساب بنكي', amount: -500.00, date: 'منذ 3 أيام', type: 'out' },
                 ].map((t, i) => (
-                  <div key={i} className="flex justify-between items-center p-6 bg-slate-50 rounded-2xl">
+                  <div key={i} className="flex justify-between items-center p-6 bg-slate-50 rounded-2xl shadow-inner border border-slate-100">
                     <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold ${t.type === 'in' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-600'}`}>
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold ${t.type === 'in' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
                         {t.type === 'in' ? '+' : '-'}
                       </div>
                       <div>
@@ -93,7 +93,7 @@ const Wallet: React.FC = () => {
                         <p className="text-[10px] text-slate-400 font-bold uppercase">{t.date}</p>
                       </div>
                     </div>
-                    <p className={`font-black ${t.type === 'in' ? 'text-emerald-600' : 'text-slate-900'}`}>
+                    <p className={`font-black ${t.type === 'in' ? 'text-emerald-600' : 'text-red-600'}`}>
                       {t.amount > 0 ? '+' : ''}{ (t.amount * exchangeRates[currency]).toFixed(2) } {currency}
                     </p>
                   </div>
@@ -119,7 +119,7 @@ const Wallet: React.FC = () => {
               <h4 className="font-black text-sm mb-4">وسائل السحب المدعومة</h4>
               <div className="grid grid-cols-2 gap-3">
                  {['Bank Transfer', 'Western Union', 'PayPal', 'Check'].map(w => (
-                   <div key={w} className="bg-slate-50 p-3 rounded-xl text-[10px] font-black text-slate-500 text-center border border-slate-100">{w}</div>
+                   <div key={w} className="bg-slate-50 p-3 rounded-xl text-[10px] font-black text-slate-500 text-center border border-slate-100 shadow-inner">{w}</div>
                  ))}
               </div>
            </div>

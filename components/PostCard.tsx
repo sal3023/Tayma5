@@ -10,7 +10,7 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
   return (
     <div 
-      className="bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 cursor-pointer group flex flex-col h-full relative"
+      className="bg-white rounded-[3rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 cursor-pointer group flex flex-col h-full relative hover:-translate-y-1"
       onClick={onClick}
     >
       <div className="relative h-64 overflow-hidden">
@@ -31,7 +31,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
         <div className="flex items-center gap-2 mb-4">
            <span className="text-[10px] uppercase tracking-widest text-slate-400 font-black">{post.readTime}</span>
            <span className="w-1.5 h-1.5 bg-blue-100 rounded-full"></span>
-           <span className="text-[10px] uppercase tracking-widest text-emerald-500 font-black">Score: {post.profitScore}%</span>
+           <span className="text-[10px] uppercase tracking-widest text-emerald-600 font-black px-3 py-1 bg-emerald-50 rounded-lg border border-emerald-100">Score: {post.profitScore}%</span>
         </div>
         
         <h3 className="text-2xl font-black mb-4 group-hover:text-blue-600 transition-colors leading-tight">
@@ -52,8 +52,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onClick }) => {
               <span className="text-[10px] text-slate-400 font-bold uppercase">{post.date}</span>
             </div>
           </div>
-          <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
-            <span className="text-xl">↖</span>
+          <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all">
+            <span className="text-xl">↗</span>
           </div>
         </div>
       </div>

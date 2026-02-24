@@ -1,14 +1,36 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Post } from '../types';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface DashboardProps {
   posts: Post[];
   onUpdatePost: (post: Post) => void;
+  ga4MeasurementId: string | null;
+  setGa4MeasurementId: (id: string | null) => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ posts }) => {
+const Dashboard: React.FC<DashboardProps> = ({ posts, onUpdatePost, ga4MeasurementId, setGa4MeasurementId }) => {
+  const [currentGa4Input, setCurrentGa4Input] = useState(ga4MeasurementId || '');
+
+  useEffect(() => {
+    setCurrentGa4Input(ga4MeasurementId || ''); // Update input field if prop changes
+  }, [ga4MeasurementId]);
+
+  const handleSaveGa4Id = () => {
+    const trimmedId = currentGa4Input.trim();
+    if (trimmedId && trimmedId.startsWith('G-')) {
+      setGa4MeasurementId(trimmedId);
+      alert('✅ تم حفظ معرف GA4 بنجاح!');
+    } else if (trimmedId === '') {
+      setGa4MeasurementId(null);
+      alert('GA4 غير متصل. تم مسح المعرف.');
+    }
+    else {
+      alert('⚠️ يرجى إدخال معرف GA4 صحيح (مثل G-XXXXXXXXXX).');
+    }
+  };
+
   const calculateEarnings = (views: number, market: string = 'Global') => {
     const rpm = market === 'USA' ? 28.5 : market === 'Europe' ? 19.2 : 7.5;
     return (views / 1000) * rpm;
@@ -97,6 +119,53 @@ const Dashboard: React.FC<DashboardProps> = ({ posts }) => {
          ))}
       </div>
 
+      {/* Google Analytics 4 Integration Card */}
+      <div className="bg-white rounded-[4rem] p-12 shadow-2xl border border-slate-100 flex flex-col items-center justify-center text-center space-y-8">
+        <div className="inline-flex items-center gap-3 px-6 py-2 bg-red-50 rounded-full text-red-600 text-[10px] font-black uppercase tracking-[0.3em] mb-4 border border-red-100">
+            <span className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></span>
+            تكامل Google Analytics 4
+        </div>
+        <h3 className="text-3xl font-black text-slate-900 leading-tight">ربط مدونتك بـ GA4 لـ "أتلانتس"</h3>
+        <p className="text-slate-500 font-bold text-lg max-w-2xl">
+          أدخل معرف قياس GA4 الخاص بك (مثال: G-XXXXXXXXXX) لتتبع أداء مدونتك، الزوار، والمقالات الأكثر ربحية.
+        </p>
+        <div className="w-full max-w-md space-y-4">
+          <input
+            type="text"
+            value={currentGa4Input}
+            onChange={(e) => setCurrentGa4Input(e.target.value)}
+            placeholder="معرف قياس GA4 (مثال: G-XXXXXXXXXX)"
+            className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 focus:border-blue-600 outline-none transition-all text-lg font-medium text-center shadow-inner"
+          />
+          <button
+            onClick={handleSaveGa4Id}
+            className="w-full bg-blue-600 text-white px-10 py-5 rounded-2xl font-black shadow-xl hover:bg-slate-900 transition-all active:scale-95"
+          >
+            حفظ معرف GA4
+          </button>
+        </div>
+        <div className="text-sm font-bold mt-4">
+          {ga4MeasurementId ? (
+            <p className="text-emerald-600">
+              ✅ GA4 متصل: <span className="underline">{ga4MeasurementId}</span>
+            </p>
+          ) : (
+            <p className="text-orange-600">
+              ⚠️ GA4 غير متصل. يرجى إدخال معرف قياس.
+            </p>
+          )}
+          <a 
+            href="https://support.google.com/analytics/answer/9744165" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-blue-500 hover:underline mt-2 inline-block text-xs"
+          >
+            كيف أجد معرف قياس GA4 الخاص بي؟
+          </a>
+        </div>
+      </div>
+
+
       {/* Analytics Visualization */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className="lg:col-span-2 bg-white rounded-[4rem] p-12 shadow-2xl border border-slate-100 h-[600px] flex flex-col">
@@ -105,9 +174,9 @@ const Dashboard: React.FC<DashboardProps> = ({ posts }) => {
                 <h4 className="text-2xl font-black">نمو الإمبراطورية الرقمية</h4>
                 <p className="text-slate-400 font-bold text-xs uppercase mt-1">إحصائيات المشاهدات والنقرات الحقيقية</p>
               </div>
-              <div className="flex gap-3 p-1.5 bg-slate-50 rounded-2xl">
-                 <button className="px-6 py-2.5 bg-white text-blue-600 rounded-xl text-xs font-black shadow-lg">Daily</button>
-                 <button className="px-6 py-2.5 text-slate-400 rounded-xl text-xs font-black">Monthly</button>
+              <div className="flex gap-3 p-1.5 bg-slate-50 rounded-2xl shadow-inner border border-slate-100">
+                 <button className="px-6 py-2.5 bg-white text-blue-600 rounded-xl text-xs font-black shadow-lg border border-blue-100">Daily</button>
+                 <button className="px-6 py-2.5 text-slate-500 rounded-xl text-xs font-black hover:bg-slate-100 hover:text-slate-900">Monthly</button>
               </div>
            </div>
            <div className="flex-1 w-full">

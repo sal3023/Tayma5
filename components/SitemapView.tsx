@@ -33,33 +33,33 @@ const SitemapView: React.FC<SitemapViewProps> = ({ posts, onBack }) => {
   const xmlContent = generateSitemapXml();
 
   return (
-    <div className="max-w-4xl mx-auto py-10">
+    <div className="max-w-4xl mx-auto py-10 px-4">
       <button 
         onClick={onBack}
-        className="mb-8 text-blue-600 font-bold flex items-center gap-2"
+        className="mb-8 text-blue-600 font-bold flex items-center gap-2 hover:-translate-x-2 transition-transform"
       >
         <span>→</span> العودة
       </button>
 
-      <div className="bg-white rounded-3xl p-8 shadow-xl border border-slate-100">
+      <div className="bg-white rounded-[3rem] p-12 shadow-xl border border-slate-100">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-black">خارطة الموقع (Sitemap.xml)</h1>
+          <h1 className="text-3xl font-black">خارطة الموقع (Sitemap.xml)</h1>
           <button 
             onClick={() => {
               navigator.clipboard.writeText(xmlContent);
-              alert('تم نسخ XML بنجاح!');
+              alert('✅ تم نسخ XML بنجاح!');
             }}
-            className="text-xs bg-slate-900 text-white px-4 py-2 rounded-lg"
+            className="text-xs bg-slate-900 text-white px-5 py-2.5 rounded-xl font-black hover:bg-blue-600 transition-all shadow-md"
           >
             نسخ الكود
           </button>
         </div>
         
-        <p className="text-slate-500 mb-6 text-sm">
+        <p className="text-slate-500 mb-6 text-sm leading-relaxed">
           يتم توليد هذا الملف تلقائياً لمساعدة محركات البحث مثل Google على فهرسة محتوى مدونتك بشكل أسرع وأكثر دقة.
         </p>
 
-        <div className="bg-slate-900 text-slate-300 p-6 rounded-2xl overflow-x-auto font-mono text-sm leading-relaxed whitespace-pre">
+        <div className="bg-slate-900 text-slate-300 p-8 rounded-2xl overflow-x-auto font-mono text-sm leading-relaxed whitespace-pre shadow-inner border border-slate-800">
           {xmlContent}
         </div>
       </div>

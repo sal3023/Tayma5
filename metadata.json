@@ -2,8 +2,7 @@
   "name": "EliteBlog Pro Global",
   "description": "Premium AI-Powered Blogging Ecosystem with AdSense integration, Global Trend Analysis, and Strategic Wallet Management.",
   "requestFramePermissions": [
-    "camera",
-    "microphone",
     "geolocation"
-  ]
+  ],
+  "lang": "ar"
 }

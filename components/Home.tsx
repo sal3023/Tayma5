@@ -21,27 +21,27 @@ const Home: React.FC<HomeProps> = ({ posts, onPostClick }) => {
     <div className="space-y-16 pb-20">
       {/* Hero Section Optimized */}
       <section 
-        className="relative rounded-[2.5rem] overflow-hidden min-h-[500px] md:h-[600px] flex items-end group cursor-pointer shadow-2xl bg-slate-900" 
+        className="relative rounded-[3rem] overflow-hidden min-h-[500px] md:h-[600px] flex items-end group cursor-pointer shadow-2xl bg-slate-900 border border-slate-800" 
         onClick={() => onPostClick(featuredPost.id)}
       >
         <img 
           src={featuredPost.image} 
           alt={featuredPost.title}
           loading="eager"
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110 opacity-60"
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110 opacity-60 group-hover:opacity-80 animate-pulse-slow"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent" />
         <div className="relative p-8 md:p-16 w-full max-w-4xl z-10">
           <div className="flex items-center gap-3 mb-4">
-            <span className="px-4 py-1 rounded-full bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/20">
+            <span className="px-4 py-1.5 rounded-full bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/20">
               مقال مختار
             </span>
             <span className="text-white/60 text-[10px] font-black uppercase tracking-widest">{featuredPost.category}</span>
           </div>
-          <h1 className="text-3xl md:text-6xl font-black text-white mb-6 leading-tight">
+          <h1 className="text-3xl md:text-6xl font-black text-white mb-6 leading-tight drop-shadow-lg">
             {featuredPost.title}
           </h1>
-          <p className="text-slate-200 text-lg md:text-xl mb-8 line-clamp-2 max-w-2xl leading-relaxed opacity-90 font-medium">
+          <p className="text-slate-200 text-lg md:text-xl mb-8 line-clamp-2 max-w-2xl leading-relaxed opacity-90 font-medium drop-shadow-md">
             {featuredPost.excerpt}
           </p>
           <div className="flex items-center gap-6">
@@ -71,15 +71,15 @@ const Home: React.FC<HomeProps> = ({ posts, onPostClick }) => {
             <p className="text-slate-500 mt-2 font-bold text-sm uppercase tracking-wide">اكتشف المحتوى العالمي المربح</p>
           </div>
           
-          <div className="flex gap-2 p-1.5 bg-slate-100 rounded-2xl overflow-x-auto max-w-full">
+          <div className="flex gap-2 p-1.5 bg-slate-100 rounded-2xl overflow-x-auto max-w-full shadow-inner border border-slate-100">
             {categories.map(cat => (
               <button 
                 key={cat} 
                 onClick={() => setActiveCategory(cat)}
-                className={`px-6 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap ${
+                className={`px-6 py-2.5 rounded-xl text-xs font-black transition-all whitespace-nowrap ${
                   activeCategory === cat 
-                    ? 'bg-white text-blue-600 shadow-lg' 
-                    : 'text-slate-500 hover:text-slate-900'
+                    ? 'bg-white text-blue-600 shadow-lg border border-blue-100' 
+                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
                 {cat}
