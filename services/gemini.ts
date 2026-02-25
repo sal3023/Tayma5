@@ -4,10 +4,12 @@ import { Post } from "../types";
 
 // استدعاء المفتاح بشكل آمن من البيئة المحددة في Vercel
 const getApiKey = (): string => {
-  const apiKey = process.env.API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey.trim() === "") {
+    console.error("GEMINI_API_KEY is missing or invalid.");
+
     // رمي خطأ واضح ومحدد إذا كان مفتاح API مفقوداً
-    throw new Error("API Key is missing or invalid. Please ensure 'API_KEY' is set correctly in your environment variables (e.g., Vercel).");
+    throw new Error("API Key is missing or invalid. Please ensure 'GEMINI_API_KEY' is set correctly in your environment variables (e.g., Vercel).");
   }
   return apiKey;
 };
@@ -47,6 +49,11 @@ export const generateFullArticle = async (title: string, category: string, marke
 
     let content = response.text || "";
     
+    if (!content) {
+      console.warn("Gemini API returned an empty or undefined content for generateFullArticle.");
+      throw new Error("فشل محرك التوليد في إنشاء محتوى المقال. يرجى المحاولة مرة أخرى.");
+    }
+
     const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
     if (groundingChunks && groundingChunks.length > 0) {
       content += "\n\n### المصادر والمراجع (References)\n";
@@ -60,9 +67,14 @@ export const generateFullArticle = async (title: string, category: string, marke
     }
 
     return { content, grounding: groundingChunks || [] };
-  } catch (error) {
-    console.error("Atlantis Pro Error:", error);
-    throw new Error("فشل محرك التوليد في الوصول للبيانات العالمية.");
+  } catch (error: any) {
+    console.error("Atlantis Pro Error during generateFullArticle:", error);
+    // Check if it's an API key error specifically
+    if (error.message && error.message.includes("API Key is missing or invalid")) {
+      throw error; // Re-throw the specific API key error
+    }
+    // For other errors, provide a more generic message but log the full error
+    throw new Error(`فشل محرك التوليد في الوصول للبيانات العالمية أو معالجتها. التفاصيل: ${error.message || 'خطأ غير معروف'}`, { cause: error });
   }
 };
 
@@ -93,11 +105,9 @@ export const fetchGlobalTrends = async (category: string, region: string = 'Glob
       }
     });
     return JSON.parse(response.text || '[]');
-  } catch (error) { 
+  } catch (error: any) { 
     console.error("Fetch Global Trends Error:", error);
-    // يمكنك هنا اختيار إعادة رمي الخطأ أو إرجاع مصفوفة فارغة بناءً على تفضيلك
-    // For now, return empty array as original behavior
-    return []; 
+    throw new Error("فشل محرك أتلانتس في جلب الترندات العالمية.", { cause: error });
   }
 };
 
@@ -110,9 +120,9 @@ export const generatePostSummary = async (content: string) => {
       contents: [{ parts: [{ text: `قم بتلخيص المقال التالي: \n\n ${content.substring(0, 5000)}` }] }],
     });
     return response.text || null;
-  } catch (error) { 
+  } catch (error: any) { 
     console.error("Generate Post Summary Error:", error);
-    return null; 
+    throw new Error("فشل محرك أتلانتس في توليد ملخص المقال.", { cause: error });
   }
 };
 
@@ -125,9 +135,9 @@ export const translateArticle = async (content: string, targetLang: string) => {
       contents: [{ parts: [{ text: `Translate to ${targetLang}: \n\n ${content}` }] }],
     });
     return response.text || null;
-  } catch (error) { 
+  } catch (error: any) { 
     console.error("Translate Article Error:", error);
-    return null; 
+    throw new Error("فشل محرك أتلانتس في ترجمة المقال.", { cause: error });
   }
 };
 
@@ -140,9 +150,9 @@ export const generateBusinessPlan = async (formData: { name: string, industry: s
       contents: [{ parts: [{ text: `إنشاء خطة عمل لـ ${formData.name} في قطاع ${formData.industry}.` }] }],
     });
     return response.text || "فشل التوليد.";
-  } catch (error) { 
+  } catch (error: any) { 
     console.error("Generate Business Plan Error:", error);
-    return "خطأ في الاتصال."; 
+    throw new Error("فشل محرك أتلانتس في توليد خطة العمل.", { cause: error });
   }
 };
 
@@ -175,9 +185,9 @@ ${existingTopics}
       },
     });
     return response.text || "تعذر تحليل فجوات المحتوى.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("Content Gaps Analysis Error:", error);
-    throw new Error("فشل محرك أتلانتس في تحليل فجوات المحتوى.");
+    throw new Error("فشل محرك أتلانتس في تحليل فجوات المحتوى.", { cause: error });
   }
 };
 
@@ -281,9 +291,9 @@ export const analyzeBlog = async (
     }
 
     return resultText;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Blog Analysis Error:", error);
-    throw new Error("فشل محرك أتلانتس في تحليل المدونة. يرجى التأكد من صحة الرابط أو توفر البيانات.");
+    throw new Error("فشل محرك أتلانتس في تحليل المدونة. يرجى التأكد من صحة الرابط أو توفر البيانات.", { cause: error });
   }
 };
 
@@ -301,9 +311,9 @@ export const generateImageForPost = async (prompt: string) => {
       if (part.inlineData) return `data:image/png;base64,${part.inlineData.data}`;
     }
     return null;
-  } catch (error) { 
+  } catch (error: any) { 
     console.error("Generate Image For Post Error:", error);
-    return null; 
+    throw new Error("فشل محرك أتلانتس في توليد الصورة.", { cause: error });
   }
 };
 
@@ -320,9 +330,9 @@ export const textToSpeech = async (text: string) => {
       },
     });
     return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-  } catch (error) { 
+  } catch (error: any) { 
     console.error("Text To Speech Error:", error);
-    return null; 
+    throw new Error("فشل محرك أتلانتس في تحويل النص إلى كلام.", { cause: error });
   }
 };
 
@@ -368,9 +378,9 @@ export const getBlogSpeedOptimizationSuggestions = async (blogUrl: string): Prom
     }
 
     return resultText;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Blog Speed Analysis Error:", error);
-    throw new Error("فشل محرك أتلانتس في تحليل سرعة المدونة. يرجى التأكد من صحة الرابط والمحاولة مرة أخرى.");
+    throw new Error("فشل محرك أتلانتس في تحليل سرعة المدونة. يرجى التأكد من صحة الرابط والمحاولة مرة أخرى.", { cause: error });
   }
 };
 
@@ -412,9 +422,9 @@ ${ga4Status}
       },
     });
     return response.text || "تعذر إجراء فحص SEO الشامل.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("SEO Audit Error:", error);
-    throw new Error("فشل محرك أتلانتس في إجراء فحص SEO الشامل.");
+    throw new Error("فشل محرك أتلانتس في إجراء فحص SEO الشامل.", { cause: error });
   }
 };
 
@@ -456,9 +466,9 @@ ${ga4Status}
       },
     });
     return response.text || "تعذر توليد اقتراحات تحسين الأرباح.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("Monetization Suggestions Error:", error);
-    throw new Error("فشل محرك أتلانتس في توليد اقتراحات تحسين الأرباح.");
+    throw new Error("فشل محرك أتلانتس في توليد اقتراحات تحسين الأرباح.", { cause: error });
   }
 };
 
@@ -497,9 +507,9 @@ ${postsSummary}
       },
     });
     return response.text || "تعذر توليد اقتراحات تعزيز التفاعل.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("Engagement Suggestions Error:", error);
-    throw new Error("فشل محرك أتلانتس في توليد اقتراحات تعزيز التفاعل.");
+    throw new Error("فشل محرك أتلانتس في توليد اقتراحات تعزيز التفاعل.", { cause: error });
   }
 };
 
@@ -583,8 +593,8 @@ export const generateBloggerTemplatePlan = async (blogUrl: string, ga4Id: string
     }
 
     return resultText;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Blogger Template Plan Generation Error:", error);
-    throw new Error("فشل محرك أتلانتس في توليد خطة تصميم قالب Blogger. يرجى التأكد من صحة الرابط والمحاولة مرة أخرى.");
+    throw new Error("فشل محرك أتلانتس في توليد خطة تصميم قالب Blogger. يرجى التأكد من صحة الرابط والمحاولة مرة أخرى.", { cause: error });
   }
 };

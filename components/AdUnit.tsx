@@ -15,7 +15,7 @@ const AdUnit: React.FC<AdUnitProps> = ({ type, slot }) => {
       return;
     }
     try {
-      // @ts-ignore
+      // @ts-expect-error: AdSense script injects 'adsbygoogle' global.
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch (e) {
       console.error('AdSense Error during push:', e);

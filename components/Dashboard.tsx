@@ -10,7 +10,7 @@ interface DashboardProps {
   setGa4MeasurementId: (id: string | null) => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ posts, onUpdatePost, ga4MeasurementId, setGa4MeasurementId }) => {
+const Dashboard: React.FC<DashboardProps> = ({ posts, ga4MeasurementId, setGa4MeasurementId }) => {
   const [currentGa4Input, setCurrentGa4Input] = useState(ga4MeasurementId || '');
 
   useEffect(() => {
@@ -125,7 +125,7 @@ const Dashboard: React.FC<DashboardProps> = ({ posts, onUpdatePost, ga4Measureme
             <span className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></span>
             تكامل Google Analytics 4
         </div>
-        <h3 className="text-3xl font-black text-slate-900 leading-tight">ربط مدونتك بـ GA4 لـ "أتلانتس"</h3>
+        <h3 className="text-3xl font-black text-slate-900 leading-tight">ربط مدونتك بـ GA4 لـ &quot;أتلانتس&quot;</h3>
         <p className="text-slate-500 font-bold text-lg max-w-2xl">
           أدخل معرف قياس GA4 الخاص بك (مثال: G-XXXXXXXXXX) لتتبع أداء مدونتك، الزوار، والمقالات الأكثر ربحية.
         </p>
@@ -207,7 +207,7 @@ const Dashboard: React.FC<DashboardProps> = ({ posts, onUpdatePost, ga4Measureme
               <div className="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center text-4xl mb-8 backdrop-blur-md border border-white/20">🛰️</div>
               <h4 className="text-3xl font-black mb-6">رؤية أتلانتس الذكية</h4>
               <p className="text-blue-50 leading-relaxed font-bold text-lg mb-8 opacity-90">
-                بناءً على تحركات السوق في نيويورك، نقترح نشر مقال عن <span className="underline decoration-white/40">"Digital Real Estate"</span> خلال الـ 4 ساعات القادمة.
+                بناءً على تحركات السوق في نيويورك، نقترح نشر مقال عن <span className="underline decoration-white/40">&quot;Digital Real Estate&quot;</span> خلال الـ 4 ساعات القادمة.
               </p>
            </div>
            <div className="space-y-4">

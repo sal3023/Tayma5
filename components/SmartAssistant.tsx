@@ -71,7 +71,7 @@ const SmartAssistant: React.FC<SmartAssistantProps> = ({ posts, ga4MeasurementId
       console.error("SmartAssistant Analysis Error (Detailed):", err);
       let userMessage = "فشل التحليل. يرجى المحاولة مرة أخرى.";
       if (err.message && err.message.includes("API Key is missing")) {
-        userMessage = "⚠️ مفتاح API مفقود أو غير صالح. يرجى التأكد من ضبط 'API_KEY' في متغيرات بيئة Vercel بشكل صحيح.";
+        userMessage = "⚠️ مفتاح API مفقود أو غير صالح. يرجى التأكد من ضبط 'GEMINI_API_KEY' في متغيرات بيئة Vercel بشكل صحيح.";
       } else if (err.message && err.message.includes("quota exceeded")) {
         userMessage = "⚠️ تجاوزت حد الاستخدام المسموح به لمفتاح API الخاص بك. يرجى التحقق من لوحة تحكم Gemini API.";
       } else if (err.message && err.message.includes("Failed to fetch")) {
@@ -97,7 +97,7 @@ const SmartAssistant: React.FC<SmartAssistantProps> = ({ posts, ga4MeasurementId
 🚀 **دليل النشر على Vercel:**
 1. اذهب إلى Vercel.com واربط مستودع GitHub الخاص بك.
 2. في إعدادات المشروع (Settings > Environment Variables):
-3. أضف مفتاح جديد باسم **API_KEY**.
+3. أضف مفتاح جديد باسم **GEMINI_API_KEY**.
 4. ضع قيمة مفتاح Gemini الخاص بك هناك.
 5. اضغط **Deploy**.. وسيتم تحديث تطبيقك آلياً مع كل "Push" للـ GitHub!
         `;
@@ -305,7 +305,7 @@ const SmartAssistant: React.FC<SmartAssistantProps> = ({ posts, ga4MeasurementId
                 {/* إضافة تلميحات إضافية لبعض الأخطاء */}
                 {error.includes("API Key مفقود أو غير صالح") && (
                    <p className="mt-2 text-xs opacity-80">
-                      تأكد من أنك قمت بتعيين متغير البيئة <code>API_KEY</code> في إعدادات Vercel (أو بيئة النشر الخاصة بك) وأن المفتاح صحيح ونشط.
+                      تأكد من أنك قمت بتعيين متغير البيئة <code>GEMINI_API_KEY</code> في إعدادات Vercel (أو بيئة النشر الخاصة بك) وأن المفتاح صحيح ونشط.
                    </p>
                 )}
                 {error.includes("فشل في الاتصال بخدمة Gemini") && (

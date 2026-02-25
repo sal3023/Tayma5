@@ -62,7 +62,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
     try {
       const translated = await translateArticle(post.content, lang);
       if (translated) setDisplayContent(translated);
-    } catch (e) {
+    } catch {
       alert("عذراً، فشلت الترجمة الآلية.");
     } finally {
       setTranslating(false);
@@ -98,7 +98,7 @@ const PostDetail: React.FC<PostDetailProps> = ({ post, onBack }) => {
         sourceNodeRef.current = source;
         setIsPlaying(true);
       }
-    } catch (e) {
+    } catch {
       alert("خطأ في معالجة الصوت.");
     } finally {
       setLoadingAudio(false);

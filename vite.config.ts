@@ -7,7 +7,7 @@ export default defineConfig({
   base: '/', // Ensure assets are served from the root path
   define: {
     // نضمن أن المتغير متاح في الكود المجمع النهائي
-    'process.env.API_KEY': JSON.stringify(process.env.API_KEY || ''),
+    'process.env.GEMINI_API_KEY': JSON.stringify(process.env.GEMINI_API_KEY || ''),
     // تم إزالة 'process.env': {} لتجنب مسح متغيرات البيئة الأخرى.
   },
   build: {

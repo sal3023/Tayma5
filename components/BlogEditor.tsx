@@ -12,6 +12,7 @@ interface BlogEditorProps {
 const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel, initialData }) => {
   const [loadingImg, setLoadingImg] = useState(false);
   const [loadingAI, setLoadingAI] = useState(false);
+  const [loadingPublish, setLoadingPublish] = useState(false);
   const [statusMsg, setStatusMsg] = useState('');
   const [seoScore, setSeoScore] = useState(0);
   
@@ -67,9 +68,8 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel, initialData }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const newPost: Post = {
+  const createPostObject = (): Post => {
+    return {
       ...formData,
       id: Date.now().toString(),
       excerpt: formData.content.slice(0, 250).replace(/[#*`]/g, '') + '...',
@@ -79,7 +79,40 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel, initialData }
       views: 0,
       profitScore: seoScore
     };
-    onSave(newPost);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(createPostObject());
+  };
+
+  const handleAutoPublish = async () => {
+    setLoadingPublish(true);
+    setStatusMsg('جاري النشر التلقائي للمقال...');
+    try {
+      const postToPublish = createPostObject();
+      const response = await fetch('/api/publish-post', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(postToPublish),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      alert(result.message);
+      onSave(postToPublish); // Save to local state after successful publish attempt
+    } catch (error: any) {
+      console.error('Auto-publish failed:', error);
+      alert(`فشل النشر التلقائي: ${error.message}`);
+    } finally {
+      setLoadingPublish(false);
+      setStatusMsg('');
+    }
   };
 
   return (
@@ -87,7 +120,7 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel, initialData }
       <div className="bg-white rounded-[4rem] p-12 md:p-20 shadow-2xl border border-slate-100">
         <header className="mb-16 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10">
           <div className="flex-1">
-            <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4">محرر الأرباح "أتلانتس" 🚀</h1>
+            <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-4">محرر الأرباح &quot;أتلانتس&quot; 🚀</h1>
             <div className="flex flex-wrap items-center gap-6">
                <p className="text-slate-500 font-bold text-lg">استهداف الأسواق العالمية بأقوى الكلمات المفتاحية.</p>
                <div className="flex items-center gap-3 px-5 py-2 bg-emerald-50 rounded-2xl shadow-lg shadow-emerald-200/50 border border-emerald-100">
@@ -151,8 +184,11 @@ const BlogEditor: React.FC<BlogEditorProps> = ({ onSave, onCancel, initialData }
           ></textarea>
 
           <div className="flex gap-4 pt-10">
-            <button type="submit" className="flex-1 bg-slate-900 text-white font-black py-6 rounded-3xl shadow-2xl hover:bg-blue-600 transition-all text-xl">نشر المقال عالمياً</button>
-            <button type="button" onClick={onCancel} className="px-10 py-6 text-slate-400 font-black hover:text-red-500 transition-colors">إلغاء</button>
+            <button type="submit" className="flex-1 bg-slate-900 text-white font-black py-6 rounded-3xl shadow-2xl hover:bg-blue-600 transition-all text-xl" disabled={loadingPublish}>نشر المقال عالمياً</button>
+            <button type="button" onClick={handleAutoPublish} className="flex-1 bg-emerald-600 text-white font-black py-6 rounded-3xl shadow-2xl hover:bg-emerald-700 transition-all text-xl" disabled={loadingPublish || loadingAI || loadingImg}>
+              {loadingPublish ? <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto" /> : 'نشر تلقائي (بلوجر)'}
+            </button>
+            <button type="button" onClick={onCancel} className="px-10 py-6 text-slate-400 font-black hover:text-red-500 transition-colors" disabled={loadingPublish}>إلغاء</button>
           </div>
         </form>
         {statusMsg && (

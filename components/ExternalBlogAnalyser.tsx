@@ -124,10 +124,10 @@ const ExternalBlogAnalyser: React.FC<ExternalBlogAnalyserProps> = ({ onBack, pos
         <header className="mb-16 text-center">
           <div className="inline-flex items-center gap-3 px-6 py-2 bg-purple-50 rounded-full text-purple-600 text-[10px] font-black uppercase tracking-[0.3em] mb-8 border border-purple-100">
             <span className="w-2.5 h-2.5 bg-purple-500 rounded-full animate-pulse"></span>
-            أداة تحليل المدونات بـ "أتلانتس"
+            أداة تحليل المدونات بـ &quot;أتلانتس&quot;
           </div>
           <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tighter leading-tight">
-            حلل مدونتك بذكاء "أتلانتس" الخارق
+            حلل مدونتك بذكاء &quot;أتلانتس&quot; الخارق
           </h1>
           <p className="text-xl text-slate-500 max-w-3xl mx-auto font-bold leading-relaxed">
             احصل على رؤى فورية لتحسين SEO (العام والمحلي)، اكتشاف فجوات المحتوى، وزيادة الأرباح لمدونتك.
@@ -196,7 +196,7 @@ const ExternalBlogAnalyser: React.FC<ExternalBlogAnalyserProps> = ({ onBack, pos
            {/* Internal Blog Info (Conditional for Internal Content Analysis) */}
            {analysisMode === 'internal' && (
             <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 text-center text-slate-600 font-bold text-sm shadow-inner">
-                <p>سيقوم "أتلانتس" بتحليل جميع المقالات المنشورة داخل تطبيق EliteBlog Pro.</p>
+                <p>سيقوم &quot;أتلانتس&quot; بتحليل جميع المقالات المنشورة داخل تطبيق EliteBlog Pro.</p>
                 {posts.length === 0 && <p className="text-red-500 mt-2">⚠️ لا توجد مقالات في مدونتك الحالية لتحليلها. يرجى إضافة مقالات أولاً.</p>}
                 {posts.length > 0 && <p className="text-emerald-600 mt-2">✅ سيتم تحليل {posts.length} مقال.</p>}
                 
@@ -209,7 +209,7 @@ const ExternalBlogAnalyser: React.FC<ExternalBlogAnalyserProps> = ({ onBack, pos
                     </p>
                   ) : (
                     <p className="text-orange-600 text-base font-black">
-                      ⚠️ غير متصل. يرجى ربط GA4 في <span className="text-blue-600 hover:underline cursor-pointer">لوحة التحكم</span>.
+                      &amp;#9888; غير متصل. يرجى ربط GA4 في <span className="text-blue-600 hover:underline cursor-pointer">لوحة التحكم</span>.
                     </p>
                   )}
                 </div>
@@ -263,7 +263,7 @@ const ExternalBlogAnalyser: React.FC<ExternalBlogAnalyserProps> = ({ onBack, pos
                     {locationLoading ? (
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     ) : (
-                      "🌍 الحصول على موقعي الحالي"
+                      '🌍 الحصول على موقعي الحالي'
                     )}
                   </button>
                   {userLocation && (
@@ -273,7 +273,7 @@ const ExternalBlogAnalyser: React.FC<ExternalBlogAnalyserProps> = ({ onBack, pos
                   )}
                   {locationError && (
                     <p className="text-red-600 text-xs font-bold text-center">
-                      ⚠️ {locationError}
+                      &amp;#9888; {locationError}
                     </p>
                   )}
                   <p className="text-slate-500 text-xs text-center">
@@ -323,7 +323,7 @@ const ExternalBlogAnalyser: React.FC<ExternalBlogAnalyserProps> = ({ onBack, pos
         {analysisResult && (
           <div className="bg-slate-50 p-12 rounded-[3.5rem] border border-slate-100 shadow-xl animate-in fade-in slide-in-from-bottom-10 duration-700">
             <h2 className="text-3xl font-black text-slate-900 mb-8 flex items-center gap-4">
-              <span className="text-5xl">💡</span> تقرير تحليل أتلانتس لمدونتك
+              <span className="text-5xl">&amp;#128161;</span> تقرير تحليل أتلانتس لمدونتك
             </h2>
             <div className="prose prose-slate max-w-none leading-[1.8] font-medium text-lg">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>

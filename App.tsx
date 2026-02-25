@@ -111,10 +111,40 @@ const App: React.FC = () => {
     }
   }, [ga4MeasurementId]);
 
+  // Effect to dynamically update document title and meta description for SEO
+  useEffect(() => {
+    let title = "Yamama AI - منصة تدوين ذكية للربح";
+    let description = "منصة مدونات متكاملة تعمل بالذكاء الاصطناعي، مصممة لتوليد محتوى عالي الربحية ومتوافق مع سياسات Google و AdSense و AdMob، مع تحليل للترندات العالمية وإدارة استراتيجية للمحفظة، لضمان تصدر نتائج البحث.";
+
+    if (view === ViewMode.POST && selectedPost) {
+      title = selectedPost.seoTitle || selectedPost.title + " | Yamama AI";
+      description = selectedPost.seoDescription || selectedPost.excerpt;
+    } else if (view === ViewMode.EDITOR) {
+      title = "محرر المقالات | Yamama AI";
+      description = "إنشاء وتعديل المقالات باستخدام محرر أتلانتس الذكي.";
+    } else if (view === ViewMode.DASHBOARD) {
+      title = "لوحة التحكم | Yamama AI";
+      description = "إدارة المقالات، تحليل الأداء، وتحسين SEO.";
+    } else if (view === ViewMode.TRENDS) {
+      title = "مستكشف الترندات | Yamama AI";
+      description = "اكتشف الترندات العالمية والمحلية لمواضيع عالية الربحية.";
+    }
+
+    document.title = title;
+    let metaDescriptionTag = document.querySelector('meta[name="description"]');
+    if (!metaDescriptionTag) {
+      metaDescriptionTag = document.createElement('meta');
+      metaDescriptionTag.setAttribute('name', 'description');
+      document.head.appendChild(metaDescriptionTag);
+    }
+    metaDescriptionTag.setAttribute('content', description);
+
+  }, [view, selectedPost]);
+
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
+    <div className="min-h-screen flex flex-col bg-gray-50 text-gray-900 font-sans">
       <Navbar currentView={view} setView={setView} />
-      <h1 className="text-center text-3xl font-bold text-blue-600 py-8">EliteBlog Pro - التطبيق يعمل!</h1>
+      <h1 className="text-center text-5xl font-extrabold text-blue-700 py-8 font-display">Yamama AI - التطبيق يعمل!</h1>
       <main className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full">
         {view === ViewMode.HOME && <Home posts={posts} onPostClick={handlePostClick} />}
         {view === ViewMode.POST && selectedPost && <PostDetail post={selectedPost} onBack={() => setView(ViewMode.HOME)} />}
@@ -146,7 +176,7 @@ const App: React.FC = () => {
       <footer className="border-t bg-white py-12">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-slate-500">
           <div className="mb-4 md:mb-0 text-center md:text-right">
-            <h2 className="text-xl font-bold text-blue-600 mb-1">EliteBlog Pro</h2>
+            <h2 className="text-3xl font-extrabold text-blue-700 mb-1 font-display">Yamama AI</h2>
             <p className="text-xs font-bold">نظام تدوين عالمي فائق الأداء.</p>
           </div>
           <div className="flex space-x-reverse space-x-4 text-[10px] font-black">
@@ -155,7 +185,7 @@ const App: React.FC = () => {
              <button onClick={() => setView(ViewMode.TERMS)} className="hover:text-blue-600">الشروط</button>
           </div>
           <div className="mt-4 md:mt-0 text-[10px] font-bold">
-            © {new Date().getFullYear()} EliteBlog
+            © {new Date().getFullYear()} Yamama AI
           </div>
         </div>
       </footer>

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 
 const Wallet: React.FC = () => {
-  const [balance, setBalance] = useState(2840.50);
+  const [balance] = useState(2840.50);
   const [currency, setCurrency] = useState('USD');
   const [withdrawalLoading, setWithdrawalLoading] = useState(false);
 
